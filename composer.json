@@ -1,0 +1,23 @@
+{
+	"name": "ABT ZF2 Application",
+	"description": "Skeleton Application for ZF2",
+	"license": "BSD-3-Clause",
+	"keywords": [],
+	"homepage": "http://framework.zend.com/",
+	"require": {
+		"php": ">=5.3.3",
+		"zendframework/zendframework": "2.2.*",
+		"doctrine/orm": ">=2.1",
+		"zf-commons/zfc-base": ">=0.0.1",
+		"zf-commons/zfc-user": ">=0.0.1",
+		"zf-commons/zfc-user-doctrine-orm": "0.*",
+		"doctrine/doctrine-module": "0.*",
+		"doctrine/doctrine-orm-module": "0.*",
+		"zendframework/zendservice-amazon": ">=2.0",
+		"doctrine/annotations": ">=1.0",
+		"doctrine/common": ">=2.1"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "3.7.*"
+	}
+}
