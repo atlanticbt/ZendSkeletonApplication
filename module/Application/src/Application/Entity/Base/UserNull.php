@@ -3,6 +3,7 @@
 namespace Application\Entity\Base;
 
 use Application\Entity\BaseNull;
+use Application\Service\Permission;
 
 class UserNull extends BaseNull implements UserInterface
 {
@@ -60,6 +61,11 @@ class UserNull extends BaseNull implements UserInterface
 	public function setUsername($username)
 	{
 		return $this;
+	}
+
+	public function getRole()
+	{
+		return Permission::ROLE_GUEST;
 	}
 
 }

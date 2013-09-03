@@ -10,6 +10,8 @@
 
 namespace Application;
 
+use Application\Service\Auth\AuthenticationService;
+
 return array(
 	'router' => array(
 		'routes' => array(
@@ -62,6 +64,19 @@ return array(
 		),
 		'aliases' => array(
 			'translator' => 'MvcTranslator',
+			'application_auth_service' => 'zfcuser_auth_service',
+		),
+		'factories' => array(
+			// override default authentication service to use a service which returns a null user.
+			'zfcuser_auth_service' => function ($sm) {
+				return new AuthenticationService(
+						$sm->get('ZfcUser\Authentication\Storage\Db'), $sm->get('ZfcUser\Authentication\Adapter\AdapterChain')
+				);
+			},
+		),
+		'invokables' => array(
+			'permission_service' => 'Application\Service\Permission',
+			'route_service' => 'Application\Service\RouteListener',
 		),
 	),
 	'translator' => array(

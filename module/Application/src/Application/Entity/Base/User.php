@@ -5,6 +5,7 @@ namespace Application\Entity\Base;
 use Application\Entity\Base;
 use Doctrine\ORM\Mapping as ORM;
 use Zend\Form\Annotation;
+use Application\Service\Permission;
 
 /**
  * @ORM\Entity
@@ -125,6 +126,11 @@ class User extends Base implements UserInterface
 	{
 		$this->username = $username;
 		return $this;
+	}
+
+	public function getRole()
+	{
+		return Permission::ROLE_USER;
 	}
 
 }
