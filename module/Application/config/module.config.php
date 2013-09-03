@@ -110,6 +110,20 @@ return array(
 			__DIR__ . '/../view',
 		),
 	),
+	'view_helpers' => array(
+		'factories' => array(
+			'flashMessages' => function($sm) {
+				$flashmessenger = $sm->getServiceLocator()
+						->get('ControllerPluginManager')
+						->get('flashmessenger');
+
+				$messages = new \Application\View\Helper\FlashMessages();
+				$messages->setFlashMessenger($flashmessenger);
+
+				return $messages;
+			},
+		),
+	),
 	// Placeholder for console routes
 	'console' => array(
 		'router' => array(
