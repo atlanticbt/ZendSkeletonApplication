@@ -21,6 +21,7 @@ class Module
 		$eventManager = $e->getApplication()->getEventManager();
 		$moduleRouteListener = new ModuleRouteListener();
 		$moduleRouteListener->attach($eventManager);
+		// enforcing ACL in routing.
 		$e->getApplication()->getEventManager()->attach(MvcEvent::EVENT_ROUTE, array($e->getApplication()->getServiceManager()->get('route_service'), 'onRoute'));
 	}
 
