@@ -4,6 +4,7 @@ namespace Application\Service;
 
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Doctrine\ORM\EntityManager;
 
 class BaseService implements ServiceLocatorAwareInterface
 {
@@ -42,6 +43,10 @@ class BaseService implements ServiceLocatorAwareInterface
 		return $this->getServiceLocator()->get('application_auth_service')->getIdentity();
 	}
 
+	/**
+	 *
+	 * @return EntityManager
+	 */
 	protected function _entityManager()
 	{
 		return $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');

@@ -77,6 +77,9 @@ return array(
 		'invokables' => array(
 			'permission_service' => 'Application\Service\Permission',
 			'route_service' => 'Application\Service\RouteListener',
+			'page_vars' => 'Application\Service\PageVars',
+			'page_response' => 'Application\Service\PageResponse',
+			'e2f' => 'Application\Service\EntityToForm',
 		),
 	),
 	'translator' => array(
