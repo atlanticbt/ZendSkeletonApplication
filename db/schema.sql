@@ -7,5 +7,7 @@ CREATE TABLE `user` (
 `role` varchar(8) NOT NULL,
 `state` varchar(8) NOT NULL,
 `display_name` varchar(256) DEFAULT NULL,
+`created_ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+`last_modified_ts` timestamp NULL DEFAULT NULL,
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;

@@ -2,10 +2,10 @@
 
 namespace Application\Entity\Base;
 
-use Application\Entity\BaseNull;
+use Application\Entity\Base\TrackedNull;
 use Application\Service\Permission;
 
-class UserNull extends BaseNull implements UserInterface
+class UserNull extends TrackedNull implements UserInterface
 {
 
 	public function getDisplayName()

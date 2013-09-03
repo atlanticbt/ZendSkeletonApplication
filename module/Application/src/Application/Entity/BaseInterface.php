@@ -12,13 +12,13 @@ interface BaseInterface
 
 	/**
 	 *
-	 * @param bool $extended
+	 * @param boolean $extended
 	 * @return array
 	 */
 	public function flatten($extended = false);
 
 	/**
-	 * @return bool
+	 * @return boolean
 	 */
 	public function isNull();
 }

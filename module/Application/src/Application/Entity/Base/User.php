@@ -2,7 +2,7 @@
 
 namespace Application\Entity\Base;
 
-use Application\Entity\Base;
+use Application\Entity\Base\Tracked;
 use Doctrine\ORM\Mapping as ORM;
 use Zend\Form\Annotation;
 use Application\Service\Permission;
@@ -16,7 +16,7 @@ use Application\Service\Permission;
  *
  * @ORM\Table(name="user")
  */
-class User extends Base implements UserInterface
+class User extends Tracked implements UserInterface
 {
 
 	/**
@@ -65,6 +65,7 @@ class User extends Base implements UserInterface
 
 	public function __construct()
 	{
+		parent::__construct();
 		$this->setState(static::STATE_INACTIVE);
 	}
 
