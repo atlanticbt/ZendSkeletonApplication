@@ -10,14 +10,20 @@ return array(
 				'home' => null,
 				UserController::ROUTE_LOGIN => null,
 				UserController::ROUTE_REGISTER => null,
-				UserController::CONTROLLER_NAME . '/logout' => null,
 			),
 			'bans' => array(),
 			'parents' => array(),
 		),
 		Permission::ROLE_USER => array(
-			'permissions' => array(),
-			'bans' => array(),
+			'permissions' => array(
+				UserController::ROUTE_CHANGEEMAIL => null,
+				UserController::ROUTE_CHANGEPASSWD => null,
+				UserController::CONTROLLER_NAME . '/logout' => null,
+			),
+			'bans' => array(
+				UserController::ROUTE_LOGIN => null,
+				UserController::ROUTE_REGISTER => null,
+			),
 			'parents' => array(Permission::ROLE_GUEST),
 		),
 		Permission::ROLE_ADMIN => array(

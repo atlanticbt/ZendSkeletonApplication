@@ -77,6 +77,9 @@ return array(
 		'invokables' => array(
 			'permission_service' => 'Application\Service\Permission',
 			'route_service' => 'Application\Service\RouteListener',
+			'page_vars' => 'Application\Service\PageVars',
+			'page_response' => 'Application\Service\PageResponse',
+			'e2f' => 'Application\Service\EntityToForm',
 		),
 	),
 	'translator' => array(
@@ -108,6 +111,20 @@ return array(
 		),
 		'template_path_stack' => array(
 			__DIR__ . '/../view',
+		),
+	),
+	'view_helpers' => array(
+		'factories' => array(
+			'flashMessages' => function($sm) {
+				$flashmessenger = $sm->getServiceLocator()
+						->get('ControllerPluginManager')
+						->get('flashmessenger');
+
+				$messages = new \Application\View\Helper\FlashMessages();
+				$messages->setFlashMessenger($flashmessenger);
+
+				return $messages;
+			},
 		),
 	),
 	// Placeholder for console routes

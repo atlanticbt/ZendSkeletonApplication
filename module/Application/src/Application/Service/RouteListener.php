@@ -2,6 +2,7 @@
 
 namespace Application\Service;
 
+use Zend\Permissions\Acl\Acl;
 use Zend\Mvc\MvcEvent;
 use ZfcUser\Controller\UserController;
 
@@ -15,11 +16,14 @@ class RouteListener extends BaseService
 		$requestedPrivilege = $e->getRouteMatch()->getParam('action');
 		/* @var $permissionService \Application\Service\Permission */
 		$permissionService = $this->getServiceLocator()->get('permission_service');
-		if (!$permissionService->getAcl()->hasResource($requestedResource)) {
+		/* @var $acl Acl */
+		$acl = $permissionService->getAcl();
+		$e->getViewModel()->setVariable('acl', $acl);
+		if (!$acl->hasResource($requestedResource)) {
 			return $this->_sendToRouteNamed($e, 'home');
 		}
 		$user = $this->_currentUser();
-		if ($permissionService->getAcl()->isAllowed($user->getRole(), $requestedResource, $requestedPrivilege)) {
+		if ($acl->isAllowed($user->getRole(), $requestedResource, $requestedPrivilege)) {
 			// make sure the user is configured
 			return;
 		} else if ($user->isNull()) {

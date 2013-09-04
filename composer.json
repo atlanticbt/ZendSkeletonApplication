@@ -1,9 +1,9 @@
 {
 	"name": "ABT ZF2 Application",
-	"description": "Skeleton Application for ZF2",
+	"description": "ZF2 Skeleton with Doctrine2 integration",
 	"license": "BSD-3-Clause",
 	"keywords": [],
-	"homepage": "http://framework.zend.com/",
+	"homepage": "http://atlanticbt.com/",
 	"require": {
 		"php": ">=5.3.3",
 		"zendframework/zendframework": "2.2.*",

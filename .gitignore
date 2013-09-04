@@ -7,4 +7,6 @@ nbproject
 .project
 .settings
 composer.lock
-vendor/bin
+/vendor/bin
+/vendor
+build

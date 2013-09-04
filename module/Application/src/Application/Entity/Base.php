@@ -22,6 +22,11 @@ abstract class Base implements BaseInterface
 	 */
 	protected $id;
 
+	public function __construct()
+	{
+
+	}
+
 	public function flatten($extended = false)
 	{
 		return array('id' => $this->getId());
