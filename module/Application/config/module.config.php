@@ -125,6 +125,12 @@ return array(
 
 				return $messages;
 			},
+			'userIdentity' => function ($sm) {
+				$locator = $sm->getServiceLocator();
+				$viewHelper = new View\Helper\UserIdentity();
+				$viewHelper->setAuthService($locator->get('zfcuser_auth_service'));
+				return $viewHelper;
+			},
 		),
 	),
 	// Placeholder for console routes
