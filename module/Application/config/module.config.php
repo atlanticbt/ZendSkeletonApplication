@@ -59,14 +59,15 @@ return array(
 			UserController::ROUTE_USER_MANAGE => array(
 				'type' => 'Segment',
 				'options' => array(
-					'route' => '/users/manage[/:user]',
+					'route' => '/users[/:action][/:user]',
 					'constraints' => array(
+						'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
 						'user' => '\d+',
 					),
 					'defaults' => array(
 						'__NAMESPACE__' => 'Application\Controller',
 						'controller' => 'User',
-						'action' => 'manage',
+						'action' => 'index',
 					),
 				),
 				'may_terminate' => true,

@@ -56,7 +56,7 @@ abstract class UpdateFactory extends BaseFactory implements UpdateFactoryInterfa
 		if (empty($class) || empty($id)) {
 			return null;
 		}
-		return $this->entityManager()->find($class, $id);
+		return $this->_entityManager()->find($class, $id);
 	}
 
 }
