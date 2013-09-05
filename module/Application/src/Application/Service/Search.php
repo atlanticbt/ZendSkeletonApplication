@@ -203,9 +203,12 @@ abstract class Search extends BaseService implements SearchInterface
 	protected function _doSearch()
 	{
 		if ($this->singular()) {
-			return new ArrayCollection($this->_entityManager()->find($this->_getEntityClass(), $this->_getIdParam()));
+			$this->_total = 1;
+			return new ArrayCollection(array($this->_entityManager()->find($this->_getEntityClass(), $this->_getIdParam())));
 		}
-		return new Paginator($this->_getQuery());
+		$paginator = new Paginator($this->_getQuery());
+		$this->_total = $paginator->count();
+		return $paginator;
 	}
 
 	/**
