@@ -7,7 +7,6 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Application\Service\PageResponse;
-use Application\Entity\Base as BaseEntity;
 
 abstract class Search extends BaseService implements SearchInterface
 {
