@@ -7,6 +7,12 @@ use PHPUnit_Framework_TestCase;
 class BaseNullTest extends PHPUnit_Framework_TestCase
 {
 
+	/**
+	 *
+	 * @var \Application\Entity\BaseNull
+	 */
+	private $_sut;
+
 	protected function setUp()
 	{
 		$this->_sut = $this->getMockForAbstractClass('Application\Entity\BaseNull');
@@ -29,7 +35,7 @@ class BaseNullTest extends PHPUnit_Framework_TestCase
 	 */
 	public function flattenShouldReturnArray()
 	{
-		$this->assertTrue(is_array($this->_sut->flatten()));
+		$this->assertInternalType('array', $this->_sut->flatten());
 	}
 
 	/**
@@ -39,7 +45,7 @@ class BaseNullTest extends PHPUnit_Framework_TestCase
 	 */
 	public function extendedFlattenShouldReturnArray()
 	{
-		$this->assertTrue(is_array($this->_sut->flatten(true)));
+		$this->assertInternalType('array', $this->_sut->flatten(true));
 	}
 
 }
