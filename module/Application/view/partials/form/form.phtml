@@ -3,31 +3,37 @@
 $form = $this->form;
 $form->setAttributes(array(
 	'role' => 'form',
-	'data-role' => 'form',
 	'class' => 'form-horizontal',
-	'action' => $this->url,
+	'data-ng-submit' => 'onFormSubmit()',
+	'data-destination' => $this->url,
 ));
-$form->setAttribute('action', $this->url);
 $form->prepare();
-?><form role="form" class="form-horizontal"><?php
+echo $this->form()->openTag($form);
+
 /* @var $element \Zend\Form\Element */
 foreach ($form as $element) {
 	?>
-		<div class="form-group<?php echo $this->formElementErrors($element) ? ' has-error' : '' ?>">
-			<label class="col-lg-2 control-label"><?php echo $element->getLabel(); ?></label>
-			<div class="col-lg-10">
-				<?php
-				$class = $element->getAttribute('class');
-				$element->setAttribute('class', $class . ' form-control');
-				echo $this->formElement($element);
-				if ($this->formElementErrors($element)) {
-					?>
-					<span class="help-block"><?php echo $this->formElementErrors($element) ?></span>
-				<?php } ?>
-			</div>
+	<div class="form-group<?php echo $this->formElementErrors($element) ? ' has-error' : '' ?>">
+		<label class="col-lg-2 control-label"><?php echo $element->getLabel(); ?></label>
+		<div class="col-lg-10">
+			<?php
+			$class = $element->getAttribute('class');
+			$element->setAttribute('class', $class . ' form-control');
+			echo $this->formElement($element);
+			if ($this->formElementErrors($element)) {
+				?>
+				<span class="help-block"><?php echo $this->formElementErrors($element) ?></span>
+			<?php } ?>
 		</div>
+	</div>
+	<?php
+}
+?><div class="form-group">
+	<div class="col-lg-offset-2 col-lg-10">
+		<button type="submit" class="btn btn-default">{{formSubmitLabel || 'Submit'}}</button>
+	</div>
+</div><?php
+echo $this->form()->closeTag();
 
-		<?php
-	}
-	?>
-</form>
+
+

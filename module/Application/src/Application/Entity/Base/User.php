@@ -20,6 +20,7 @@ class User extends Tracked implements UserInterface
 {
 
 	/**
+	 *
 	 * @ORM\Column(type="string", name="display_name", length=256);
 	 * @Annotation\Type("Zend\Form\Element\Text")
 	 * @Annotation\Options({"label":"Display Name"})
@@ -29,15 +30,18 @@ class User extends Tracked implements UserInterface
 	protected $displayName;
 
 	/**
+	 *
 	 * @ORM\Column(type="string", length=256);
 	 * @Annotation\Type("Zend\Form\Element\Text")
 	 * @Annotation\Options({"label":"Email"})
+	 * @Annotation\Validator({"name": "EmailAddress", "options": {"messages": {Zend\Validator\EmailAddress::INVALID_FORMAT: "Please provide a valid email address."}}})
 	 *
 	 * @var type
 	 */
 	protected $email;
 
 	/**
+	 *
 	 * @ORM\Column(type="string", name="hash", length=256);
 	 * @Annotation\Type("Zend\Form\Element\Password")
 	 * @Annotation\Options({"label":"Password"})
@@ -47,6 +51,7 @@ class User extends Tracked implements UserInterface
 	protected $password;
 
 	/**
+	 *
 	 * @ORM\Column(type="string", name="name", length=256);
 	 * @Annotation\Type("Zend\Form\Element\Text")
 	 * @Annotation\Options({"label":"User Name"})
@@ -56,6 +61,7 @@ class User extends Tracked implements UserInterface
 	protected $username;
 
 	/**
+	 *
 	 * @ORM\Column(type="string", length=8);
 	 * @Annotation\Exclude()
 	 *

@@ -122,6 +122,11 @@ return array(
 			'Application\Controller\User' => 'Application\Controller\UserController',
 		),
 	),
+	'controller_plugins' => array(
+		'invokables' => array(
+			'jsonResponse' => 'Application\Controller\Plugin\JsonResponse',
+		),
+	),
 	'view_manager' => array(
 		'display_not_found_reason' => true,
 		'display_exceptions' => true,

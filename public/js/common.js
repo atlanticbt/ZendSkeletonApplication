@@ -7,10 +7,10 @@ var common = {
 			expires: 5,
 			prependTo: 'body > div.container:first',
 		}, arguments[1] || {});
-		var cls = '';
+		var cls = 'info';
 
 		if (options.type == 'error') {
-			cls = 'alert';
+			cls = 'danger';
 		} else if (options.type == 'success') {
 			cls = 'success';
 		}
@@ -18,14 +18,9 @@ var common = {
 		if ($(options.prependTo).length < 1) {
 			options.prependTo = 'body';
 		}
-		/**
-		 * <div class="alert-box radius cls">
-		 msg
-		 </div>
-		 */
-		var alert = $('<div data-alert class="alert-box radius ' + cls + '">' +
+		var alert = $('<div data-alert class="alert alert-dismissable alert-' + cls + '">' +
+				'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
 				msg +
-				'<a href="javascript:void(null)" class="close">&times;</a>' +
 				'</div>').prependTo(options.prependTo);
 		if (options.expires > 0) {
 			alert.data('expire-timeout', setTimeout(function() {
@@ -42,13 +37,10 @@ var common = {
 	 */
 	formErrors: function(errors) {
 		if (!errors) {
+			$('div.has-error').removeClass('has-error').find('span.help-block').remove();
 			return;
 		}
 		var options = $.extend({}, arguments[1]);
-		if (errors === true) {
-			$('div.error').removeClass('error').find('small:last').remove();
-			return;
-		}
 		if (typeof errors == 'string') {
 			common.alert(errors);
 			return;
@@ -62,13 +54,13 @@ var common = {
 			});
 			if (formInput.length > 0) {
 				// add the error to the field
-				formInput.parents('div:first').addClass('error').append('<small>' + fieldErrors.join(', ') + '</small>')
+				formInput.parents('div:first').parents('div:first').addClass('has-error').end().append('<span class="help-block">' + fieldErrors.join(', ') + '</span>')
 			} else {
 				err = err.concat(fieldErrors);
 			}
 		});
 		if (err.length > 0) {
-			common.alert('<ul class="no-bullet" style="margin-bottom:0;"><li>' + err.join('</li><li>') + '</li></ul>', options);
+			common.alert('<ul><li>' + err.join('</li><li>') + '</li></ul>', options);
 		}
 
 	}
@@ -78,7 +70,33 @@ $(document).ready(common.init);
 
 var ABTApp = angular.module('ABT', []);
 
-ABTApp.service('pageFilterService', function($rootScope) {
+ABTApp.service('abtPost', function($http) {
+	return {
+		headers: function() {
+			return {
+				headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			};
+		},
+		params: function(data) {
+			if (!data) {
+				data = {};
+			}
+			return $.param(data);
+		},
+		send: function(url, data, success, fail) {
+			return $http.post(url, this.params(data), this.headers())
+					.success(function(data, status, headers, config) {
+				if (!data || !data.success) {
+					fail(data && data.msg ? data.msg : 'The request failed', data, status, headers, config);
+					return;
+				}
+				success(data, status, headers, config);
+			}).error(function(data, status, headers, config) {
+				fail('The request failed.', data, status, headers, config);
+			});
+		}
+	}
+}).service('pageFilterService', function($rootScope) {
 	var filters = {};
 	return {
 		getFilter: function(key) {

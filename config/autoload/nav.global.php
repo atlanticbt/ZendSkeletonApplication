@@ -1,6 +1,7 @@
 <?php
 
 use ZfcUser\Controller\UserController;
+use Application\Controller\UserController as ManageUserController;
 
 return array(
 // ...
@@ -37,6 +38,11 @@ return array(
 						'label' => 'Change Password',
 						'route' => UserController::ROUTE_CHANGEPASSWD,
 						'resource' => UserController::ROUTE_CHANGEPASSWD,
+					),
+					array(
+						'label' => 'Manage Users',
+						'route' => ManageUserController::ROUTE_USER_MANAGE,
+						'resource' => ManageUserController::ROUTE_USER_MANAGE,
 					),
 					array(
 						'label' => 'Log Out',
