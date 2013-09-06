@@ -37,17 +37,46 @@ class PageNg extends AbstractHelper
 		);
 	}
 
-	public function __invoke()
+	/**
+	 *
+	 * @param array $options
+	 * @return \Application\View\Helper\PageNg
+	 */
+	public function __invoke(array $options = null)
 	{
+		if (!empty($options)) {
+			$this->setOptions($options);
+		}
 		return $this;
 	}
 
+	/**
+	 *
+	 * @return string
+	 */
+	public function __toString()
+	{
+		return $this->create();
+	}
+
+	/**
+	 * Sets an individual option
+	 * @param string $optionName
+	 * @param mixed $optionValue
+	 * @return \Application\View\Helper\PageNg
+	 */
 	public function setOption($optionName, $optionValue)
 	{
 		$this->_options[$optionName] = $optionValue;
 		return $this;
 	}
 
+	/**
+	 * Sets one or more options at once to override default.
+	 * @param array $options
+	 * @return \Application\View\Helper\PageNg
+	 * @throws \InvalidArgumentException
+	 */
 	public function setOptions(array $options)
 	{
 		if (empty($options) || !is_array($options)) {
@@ -57,17 +86,32 @@ class PageNg extends AbstractHelper
 		return $this;
 	}
 
+	/**
+	 *
+	 * @return string
+	 */
 	public function create()
 	{
 		$options = array_merge($this->_defaultOptions, $this->_options);
-		return $this->_render('pagination/page-content.phtml', $options);
+		return $this->_render('pagination/page-content.phtml', $this->_processOptions($options));
 	}
 
+	/**
+	 * Outputs the result of create()
+	 * @return \Application\View\Helper\PageNg
+	 */
 	public function emit()
 	{
 		echo $this->create();
+		return $this;
 	}
 
+	/**
+	 *
+	 * @param string $scriptName
+	 * @param null|array $data
+	 * @return string
+	 */
 	protected function _render($scriptName, $data = null)
 	{
 		try {
@@ -78,6 +122,11 @@ class PageNg extends AbstractHelper
 		}
 	}
 
+	/**
+	 *
+	 * @param array $options
+	 * @return array
+	 */
 	protected function _processOptions($options)
 	{
 		if (isset($options[static::OPTION_ROW_SCRIPT])) {

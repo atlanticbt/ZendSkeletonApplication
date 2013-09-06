@@ -5,11 +5,11 @@ use Application\View\Helper\PageNg;
 
 <h1>Manage Users</h1>
 <?php
-$this->pageNg()->setOptions(array(
+echo $this->pageNg(array(
 	PageNg::OPTION_DATA => $this->page,
 	PageNg::OPTION_ROW_HEADINGS => array(
 		'<th>ID</th>', '<th>Email</th>', '<th>User Name</th>'
 	),
 	PageNg::OPTION_ROW_TMP => '<td>{{entry.id}}</td><td>{{entry.email}}</td><td>{{entry.username}}</td>',
-))->emit()
+));
 ?>
