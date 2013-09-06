@@ -26,6 +26,12 @@ interface UpdateInterface
 	public function setParams($params);
 
 	/**
+	 * Typically called when displaying a page to update an entity.
+	 * @return \Zend\Form\Form
+	 */
+	public function form($type = null);
+
+	/**
 	 * Execute the update.
 	 *
 	 * @return UpdateInterface

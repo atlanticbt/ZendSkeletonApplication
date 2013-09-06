@@ -1,0 +1,24 @@
+<?php
+$this->inlineScript()->appendFile('/js/controllers-ng/page.js');
+?><div id="<?php echo $this->containerId; ?>" class="row" ng-controller="PageCtrl"<?php echo $this->initNg('setPageData', $this->page, true, true) ?>>
+	<h3><?php echo $this->heading; ?> ({{meta.total && meta.total || '0'}})</h3>
+	<table class="table table-striped table-hover">
+		<thead>
+			<tr>
+				<?php echo implode('', $this->tableHeadings); ?>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-hide="loadingPage" ng-repeat="<?php echo $this->entryName; ?> in entries">
+				<?php echo $this->entryRow; ?>
+			</tr>
+			<tr ng-show="entries.length < 1 && !loadingPage"><td colspan="<?php echo count($this->tableHeadings) ?>"><em><?php echo $this->emptyTableMessage ?></em></td></tr>
+			<tr ng-show="loadingPage"><td colspan="<?php echo count($this->tableHeadings) ?>"><em><?php echo empty($this->loadingTableMessage) ? '<div class="progress progress-striped active">
+  <div class="progress-bar" role="progressbar" style="width: 50%">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>' : $this->loadingTableMessage; ?></em></td></tr>
+		</tbody>
+	</table>
+	<?php echo $this->render('pagination/page-buttons.phtml'); ?>
+</div>

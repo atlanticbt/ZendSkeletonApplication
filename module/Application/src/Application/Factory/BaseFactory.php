@@ -8,6 +8,7 @@ use Zend\Http\Request;
 abstract class BaseFactory extends BaseService implements BaseFactoryInterface
 {
 
+	protected $_eventManager;
 	protected $_routeParams;
 	protected $_request;
 	protected $_params;
@@ -56,7 +57,7 @@ abstract class BaseFactory extends BaseService implements BaseFactoryInterface
 	protected function _getParams()
 	{
 		if (!isset($this->_params)) {
-			$this->_params = array_merge($this->getRouteParams(), $this->_getRequest()->getPost()->toArray());
+			$this->_params = array_merge($this->_getRouteParams(), $this->_getRequest()->getPost()->toArray());
 		}
 		return $this->_params;
 	}
@@ -65,6 +66,17 @@ abstract class BaseFactory extends BaseService implements BaseFactoryInterface
 	{
 		$params = $this->_getParams();
 		return isset($params[$index]) ? $params[$index] : null;
+	}
+
+	public function getEventManager()
+	{
+		return $this->_eventManager;
+	}
+
+	public function setEventManager(\Zend\EventManager\EventManagerInterface $eventManager)
+	{
+		$this->_eventManager = $eventManager;
+		return $this;
 	}
 
 }

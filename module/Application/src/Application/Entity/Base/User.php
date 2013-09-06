@@ -69,6 +69,15 @@ class User extends Tracked implements UserInterface
 		$this->setState(static::STATE_INACTIVE);
 	}
 
+	public function flatten($extended = false)
+	{
+		return array_merge(parent::flatten($extended), array(
+			'displayName' => $this->getDisplayName(),
+			'email' => $this->getEmail(),
+			'username' => $this->getUsername(),
+		));
+	}
+
 	public function getDisplayName()
 	{
 		return $this->displayName;

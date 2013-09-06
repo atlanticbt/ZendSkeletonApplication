@@ -1,6 +1,6 @@
 <?php echo $this->doctype(); ?>
 
-<html lang="en" ng-app>
+<html lang="en" ng-app="ABT">
     <head>
         <meta charset="utf-8">
 		<?php echo $this->headTitle('ABT ZF2 ' . $this->translate('Skeleton Application'))->setSeparator(' - ')->setAutoEscape(false) ?>
@@ -49,7 +49,7 @@
 					echo $this->navigation('Navigation')
 							->setContainer($this->navigation()->findOneById('top-nav'))
 							->setAcl($this->acl)
-							->setRole($this->zfcUserIdentity() ? $this->zfcUserIdentity()->getRole() : \Application\Service\Permission::ROLE_GUEST)
+							->setRole($this->userIdentity()->getRole())
 							->menu()
 							->setUlClass('nav navbar-nav')
 							->escapeLabels(false);
@@ -64,6 +64,6 @@
                 <p>&copy; <?php echo date('Y') ?> by <a href="http://atlanticbt.com">AtlanticBT</a> <?php echo $this->translate('All rights reserved.') ?></p>
             </footer>
         </div> <!-- /container -->
-		<?php echo $this->inlineScript() ?>
+		<?php echo $this->inlineScript()->prependFile($this->basePath() . '/js/common.js') ?>
     </body>
 </html>

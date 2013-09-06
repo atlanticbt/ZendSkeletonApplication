@@ -11,6 +11,7 @@
 namespace Application;
 
 use Application\Service\Auth\AuthenticationService;
+use Application\Controller\UserController;
 
 return array(
 	'router' => array(
@@ -55,6 +56,22 @@ return array(
 					),
 				),
 			),
+			UserController::ROUTE_USER_MANAGE => array(
+				'type' => 'Segment',
+				'options' => array(
+					'route' => '/users[/:action][/:user]',
+					'constraints' => array(
+						'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+						'user' => '\d+',
+					),
+					'defaults' => array(
+						'__NAMESPACE__' => 'Application\Controller',
+						'controller' => 'User',
+						'action' => 'index',
+					),
+				),
+				'may_terminate' => true,
+			),
 		),
 	),
 	'service_manager' => array(
@@ -80,6 +97,13 @@ return array(
 			'page_vars' => 'Application\Service\PageVars',
 			'page_response' => 'Application\Service\PageResponse',
 			'e2f' => 'Application\Service\EntityToForm',
+			/** user services * */
+			// update
+			'user_update_factory' => 'Application\Factory\Update\User',
+			'user_update_service' => 'Application\Service\Update\User',
+			// search
+			'user_search_factory' => 'Application\Factory\Search\User',
+			'user_search_service' => 'Application\Service\Search\User',
 		),
 	),
 	'translator' => array(
@@ -94,7 +118,8 @@ return array(
 	),
 	'controllers' => array(
 		'invokables' => array(
-			'Application\Controller\Index' => 'Application\Controller\IndexController'
+			'Application\Controller\Index' => 'Application\Controller\IndexController',
+			'Application\Controller\User' => 'Application\Controller\UserController',
 		),
 	),
 	'view_manager' => array(
@@ -111,6 +136,10 @@ return array(
 		),
 		'template_path_stack' => array(
 			__DIR__ . '/../view',
+			__DIR__ . '/../view/partials',
+		),
+		'strategies' => array(
+			'ViewJsonStrategy',
 		),
 	),
 	'view_helpers' => array(
@@ -125,6 +154,16 @@ return array(
 
 				return $messages;
 			},
+			'userIdentity' => function ($sm) {
+				$locator = $sm->getServiceLocator();
+				$viewHelper = new View\Helper\UserIdentity();
+				$viewHelper->setAuthService($locator->get('zfcuser_auth_service'));
+				return $viewHelper;
+			},
+		),
+		'invokables' => array(
+			'initNg' => 'Application\View\Helper\InitNg',
+			'pageNg' => 'Application\View\Helper\PageNg',
 		),
 	),
 	// Placeholder for console routes

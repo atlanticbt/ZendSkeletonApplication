@@ -70,6 +70,15 @@ class Update extends BaseService implements UpdateInterface
 		return $this;
 	}
 
+	public function form($type = null)
+	{
+		$forms = $this->_getForms();
+		if (empty($type) || !isset($forms[$type])) {
+			$type = static::BASE_FORM_NAME;
+		}
+		return $forms[$type];
+	}
+
 	/**
 	 * Attempts to update the entities.
 	 * @return \Application\Service\Update

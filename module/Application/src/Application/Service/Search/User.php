@@ -5,6 +5,9 @@ namespace Application\Service\Search;
 use Application\Service\Search;
 use Application\Entity\Base\UserInterface as UserEntity;
 
+/**
+ * service: user_search_service
+ */
 class User extends Search
 {
 
@@ -15,7 +18,7 @@ class User extends Search
 
 	protected function _getEntityClass()
 	{
-		return 'Application\Entity\User';
+		return '\Application\Entity\Base\User';
 	}
 
 	protected function _applyFilters(\Doctrine\ORM\QueryBuilder $qb)
@@ -38,9 +41,14 @@ class User extends Search
 
 	protected function _filterByActive(\Doctrine\ORM\QueryBuilder $qb)
 	{
-		$qb->andWhere('u.status = :status')
-				->setParameter('status', UserEntity::STATE_ACTIVE);
+		$qb->andWhere('u.state = :state')
+				->setParameter('state', UserEntity::STATE_ACTIVE);
 		return $this;
+	}
+
+	protected function _getIdParam()
+	{
+		return $this->_getParam('user');
 	}
 
 }

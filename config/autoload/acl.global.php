@@ -2,6 +2,7 @@
 
 use Application\Service\Permission;
 use ZfcUser\Controller\UserController as UserController;
+use Application\Controller\UserController as ManageUserController;
 
 return array(
 	'acl_resource_map' => array(
@@ -32,7 +33,9 @@ return array(
 			'parents' => array(Permission::ROLE_USER),
 		),
 		Permission::ROLE_SUPER => array(
-			'permissions' => array(),
+			'permissions' => array(
+				ManageUserController::ROUTE_USER_MANAGE => null,
+			),
 			'bans' => array(),
 			'parents' => array(Permission::ROLE_ADMIN),
 		),
