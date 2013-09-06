@@ -1,5 +1,10 @@
 function ManageUserCtrl($scope, $http, abtPost) {
+	$scope.setUser = function(data) {
+		$scope.form = data;
+
+	}
 	$scope.onFormSubmit = function() {
+		console.log($scope.form);
 		// clear any existing form errors.
 		common.formErrors();
 		abtPost.send(window.location.href, $scope.form, function(data, status, headers, config) {
@@ -8,4 +13,5 @@ function ManageUserCtrl($scope, $http, abtPost) {
 			common.formErrors(msg);
 		});
 	}
+	$scope.form = {};
 }

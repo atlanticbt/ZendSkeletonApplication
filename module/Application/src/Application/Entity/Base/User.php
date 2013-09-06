@@ -21,9 +21,13 @@ class User extends Tracked implements UserInterface
 
 	/**
 	 *
-	 * @ORM\Column(type="string", name="display_name", length=256);
+	 * @ORM\Column(type="string", name="display_name", length=256)
 	 * @Annotation\Type("Zend\Form\Element\Text")
+	 * @Annotation\Attributes({"data-ng-model":"form.displayName"})
 	 * @Annotation\Options({"label":"Display Name"})
+	 * @Annotation\Filter({"name": "StripTags"})
+	 * @Annotation\Filter({"name": "StringTrim"})
+	 * @Annotation\Validator({"name": "StringLength", "options": {"min": 1,"max": 256, "messages": {\Zend\Validator\StringLength::INVALID: "Please provide a display name"}}})
 	 *
 	 * @var type
 	 */
@@ -33,6 +37,7 @@ class User extends Tracked implements UserInterface
 	 *
 	 * @ORM\Column(type="string", length=256);
 	 * @Annotation\Type("Zend\Form\Element\Text")
+	 * @Annotation\Attributes({"data-ng-model":"form.email"})
 	 * @Annotation\Options({"label":"Email"})
 	 * @Annotation\Validator({"name": "EmailAddress", "options": {"messages": {Zend\Validator\EmailAddress::INVALID_FORMAT: "Please provide a valid email address."}}})
 	 *
@@ -54,7 +59,11 @@ class User extends Tracked implements UserInterface
 	 *
 	 * @ORM\Column(type="string", name="name", length=256);
 	 * @Annotation\Type("Zend\Form\Element\Text")
+	 * @Annotation\Attributes({"data-ng-model":"form.username"})
 	 * @Annotation\Options({"label":"User Name"})
+	 * @Annotation\Filter({"name": "StripTags"})
+	 * @Annotation\Filter({"name": "StringTrim"})
+	 * @Annotation\Validator({"name": "StringLength", "options": {"min": 1,"max": 256, "messages": {\Zend\Validator\StringLength::INVALID: "Please provide a user name"}}})
 	 *
 	 * @var type
 	 */

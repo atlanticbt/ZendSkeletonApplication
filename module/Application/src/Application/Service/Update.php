@@ -70,6 +70,21 @@ class Update extends BaseService implements UpdateInterface
 		return $this;
 	}
 
+	/**
+	 * Returns the base entity
+	 * @return Base
+	 */
+	public function entity()
+	{
+		return $this->_getEntity();
+	}
+
+	/**
+	 * Returns the entity-converted form of the specified type
+	 * (leave blank for default entity form)
+	 * @param string|null $type
+	 * @return \Zend\Form\Form
+	 */
 	public function form($type = null)
 	{
 		$forms = $this->_getForms();

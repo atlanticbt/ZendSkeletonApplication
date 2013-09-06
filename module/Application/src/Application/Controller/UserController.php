@@ -33,7 +33,7 @@ class UserController extends AbstractActionController
 			$service->update();
 			return $this->jsonResponse($service->success(), $service->message(), $service->responseData());
 		}
-		return new ViewModel(array('form' => $service->form()));
+		return new ViewModel(array('form' => $service->form(), 'entity' => $service->entity()));
 	}
 
 }
