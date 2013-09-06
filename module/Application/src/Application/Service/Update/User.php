@@ -9,6 +9,6 @@ use Application\Service\Update;
  */
 class User extends Update
 {
-
+	
 }
 

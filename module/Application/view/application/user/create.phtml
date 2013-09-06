@@ -1,0 +1,16 @@
+<?php
+
+use Application\Controller\UserController as ManageUserController;
+
+$this->inlineScript()->appendFile('/js/controllers-ng/user/manage-ctrl.js');
+?>
+<div ng-controller="ManageUserCtrl" <?php echo $this->initNg('setUser', $this->entity, true, true); ?>>
+	<h1>Create User</h1>
+	<?php
+	echo $this->partial('form/form.phtml', array(
+		'form' => $this->form,
+		'url' => $this->url(ManageUserController::ROUTE_USER_MANAGE, array('action' => 'create')),
+		'elements' => array('email', 'username')
+	));
+	?>
+</div>

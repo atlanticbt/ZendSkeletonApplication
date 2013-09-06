@@ -29,9 +29,15 @@ class RouteListener extends BaseService
 		}
 		$user = $this->_currentUser();
 		if ($acl->isAllowed($user->getRole(), $requestedResource, $requestedPrivilege)) {
+			if (static::DEBUG) {
+				exit("({$requestedResource}) is available to you!");
+			}
 			// make sure the user is configured
 			return;
 		} else if ($user->isNull()) {
+			if (static::DEBUG) {
+				exit("({$requestedResource}) is not available for guests.");
+			}
 			// user is not logged in
 			return $this->_sendToRouteNamed($e, UserController::ROUTE_LOGIN);
 		} else {

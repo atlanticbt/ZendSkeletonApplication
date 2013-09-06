@@ -10,7 +10,8 @@ class User extends UpdateFactory
 
 	protected function _getUpdateService()
 	{
-		return $this->getServiceLocator()->get('user_update_service');
+		$service = $this->_isCreatingUser() ? 'user_create_service' : 'user_update_service';
+		return $this->getServiceLocator()->get($service);
 	}
 
 	protected function _getEntityClass()
@@ -25,11 +26,19 @@ class User extends UpdateFactory
 
 	protected function _getEntity()
 	{
+		if ($this->_isCreatingUser()) {
+			return $this->_getNewEntity();
+		}
 		$entity = parent::_getEntity();
 		if (empty($entity)) {
 			return $this->_currentUser();
 		}
 		return $entity;
+	}
+
+	protected function _isCreatingUser()
+	{
+		return $this->_getParam('action') == 'create';
 	}
 
 }

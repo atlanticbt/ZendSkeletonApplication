@@ -9,9 +9,16 @@ $form->setAttributes(array(
 ));
 $form->prepare();
 echo $this->form()->openTag($form);
+$elements = $form;
+if (isset($this->elements)) {
+	$elements = array();
+	foreach ($this->elements as $elementName) {
+		$elements[] = $this->form->get($elementName);
+	}
+}
 
 /* @var $element \Zend\Form\Element */
-foreach ($form as $element) {
+foreach ($elements as $element) {
 	?>
 	<div class="form-group<?php echo $this->formElementErrors($element) ? ' has-error' : '' ?>">
 		<label class="col-lg-2 control-label"><?php echo $element->getLabel(); ?></label>

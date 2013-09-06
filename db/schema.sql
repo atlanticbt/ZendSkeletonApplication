@@ -2,7 +2,7 @@ CREATE TABLE `user` (
 `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 `email` varchar(256) NOT NULL,
 `name` varchar(256) DEFAULT NULL,
-`hash` varchar(256) NOT NULL,
+`hash` varchar(256) DEFAULT NULL,
 `login_hash` varchar(256) DEFAULT NULL,
 `role` varchar(8) NOT NULL,
 `state` varchar(8) NOT NULL,

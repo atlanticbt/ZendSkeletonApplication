@@ -157,6 +157,7 @@ class Update extends BaseService implements UpdateInterface
 	protected function _prepare()
 	{
 		$this->_forms = array();
+		$this->_prePrepare();
 		foreach ($this->_getForms() as $formTag => $form) {
 			if ($this->_hasValidationGroup($formTag)) {
 				$form->setValidationGroup($this->_getValidationGroup($formTag));
@@ -164,6 +165,15 @@ class Update extends BaseService implements UpdateInterface
 			$this->_forms[] = $form->setData($this->_getFormData($formTag));
 		}
 		$this->_postPrepare();
+		return $this;
+	}
+
+	/**
+	 * Hook to set up any data before the prepare function runs and sets validation groups/data
+	 * @return \Application\Service\Update
+	 */
+	protected function _prePrepare()
+	{
 		return $this;
 	}
 
@@ -187,6 +197,16 @@ class Update extends BaseService implements UpdateInterface
 			return $this->_getParam($formTag);
 		}
 		return $this->_getParams();
+	}
+
+	protected function _setFormData($key, $value, $formTag = null)
+	{
+		if (empty($formTag) || $formTag == static::BASE_FORM_NAME) {
+			$this->_params[$key] = $value;
+		} else {
+			$this->_params[$formTag][$key] = $value;
+		}
+		return $this;
 	}
 
 	/**

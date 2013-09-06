@@ -48,8 +48,7 @@ class User extends Tracked implements UserInterface
 	/**
 	 *
 	 * @ORM\Column(type="string", name="hash", length=256);
-	 * @Annotation\Type("Zend\Form\Element\Password")
-	 * @Annotation\Options({"label":"Password"})
+	 * @Annotation\Exclude()
 	 *
 	 * @var type
 	 */
@@ -72,7 +71,18 @@ class User extends Tracked implements UserInterface
 	/**
 	 *
 	 * @ORM\Column(type="string", length=8);
-	 * @Annotation\Exclude()
+	 * @Annotation\Type("Zend\Form\Element\Select")
+	 * @Annotation\Options({"label":"State"})
+	 * @Annotation\Attributes({"data-ng-model": "form.state",
+	 *                          "options":{
+	 * 								\Application\Entity\Base\UserInterface::STATE_ACTIVE: "Active",
+	 * 								\Application\Entity\Base\UserInterface::STATE_INACTIVE: "Inactive",
+	 * 								\Application\Entity\Base\UserInterface::STATE_BANNED: "Banned"
+	 * 							}
+	 * })
+	 * @Annotation\Filter({"name": "StripTags"})
+	 * @Annotation\Filter({"name": "StringTrim"})
+	 * @Annotation\Validator({"name": "StringLength", "options": {"min": 1,"max": 8}})
 	 *
 	 * @var type
 	 */
@@ -90,6 +100,7 @@ class User extends Tracked implements UserInterface
 			'displayName' => $this->getDisplayName(),
 			'email' => $this->getEmail(),
 			'username' => $this->getUsername(),
+			'state' => $this->getState(),
 		));
 	}
 
