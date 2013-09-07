@@ -19,6 +19,12 @@ class Update extends BaseService implements UpdateInterface
 	protected $_entity;
 
 	/**
+	 * Array containing any other entities which might interact with this one.
+	 * @var array
+	 */
+	protected $_sideEntities;
+
+	/**
 	 *
 	 * @var array
 	 */
@@ -29,6 +35,31 @@ class Update extends BaseService implements UpdateInterface
 	 * @var array
 	 */
 	protected $_forms;
+
+	/**
+	 * Associative array of callables which will be called when a form with a
+	 * matching key is being created from an entity (during _getForms() process)
+	 * Callable should expect 3 parameters:
+	 * 	(string) $key
+	 * 	(\Zend\Form\Form) $form
+	 * 	(\Application\Entity\BaseInterface) $entity
+	 *
+	 * And should return \Zend\Form\Form object
+	 *
+	 * @var array
+	 */
+	protected $_formConfigCallables = array();
+
+	/**
+	 * Associative array of callables which will be called when a form with a
+	 * matching key is being validated (during _validate() process). Callable
+	 * should expect 2 parameters:
+	 * 	(string) $key
+	 * 	(\Zend\Form\Form) $form
+	 * And should return a boolean indicating whether the form validated.
+	 * @var array
+	 */
+	protected $_formValidateCallables = array();
 
 	/**
 	 *
@@ -71,11 +102,16 @@ class Update extends BaseService implements UpdateInterface
 	}
 
 	/**
-	 * Returns the base entity
+	 * Returns the base entity if $type is not set, else returns side entity
+	 * @param string|null $type
 	 * @return Base
 	 */
-	public function entity()
+	public function entity($type = null)
 	{
+		$sideEntities = $this->_getSideEntities();
+		if (isset($sideEntities[$type])) {
+			return $sideEntities[$type];
+		}
 		return $this->_getEntity();
 	}
 
@@ -156,14 +192,23 @@ class Update extends BaseService implements UpdateInterface
 	 */
 	protected function _prepare()
 	{
-		$this->_forms = array();
+		$this->_prePrepare();
 		foreach ($this->_getForms() as $formTag => $form) {
 			if ($this->_hasValidationGroup($formTag)) {
 				$form->setValidationGroup($this->_getValidationGroup($formTag));
 			}
-			$this->_forms[] = $form->setData($this->_getFormData($formTag));
+			$form->setData($this->_getFormData($formTag));
 		}
 		$this->_postPrepare();
+		return $this;
+	}
+
+	/**
+	 * Hook to set up any data before the prepare function runs and sets validation groups/data
+	 * @return \Application\Service\Update
+	 */
+	protected function _prePrepare()
+	{
 		return $this;
 	}
 
@@ -176,11 +221,53 @@ class Update extends BaseService implements UpdateInterface
 		return $this;
 	}
 
-	protected function _getForms()
+	/**
+	 * Returns an associative array of entities which will go with the main entity
+	 * @return array
+	 */
+	protected function _generateSideEntities()
 	{
-		return array(static::BASE_FORM_NAME => $this->_toForm($this->_getEntity()));
+		return array();
 	}
 
+	/**
+	 * Gets side entities and stores a local reference. Override _generateSideEntities
+	 * to add entities to this array.
+	 * @return array
+	 */
+	protected function _getSideEntities()
+	{
+		if (!isset($this->_sideEntities)) {
+			$this->_sideEntities = $this->_generateSideEntities();
+		}
+		return $this->_sideEntities;
+	}
+
+	/**
+	 * Returns an associative array of 'key' => \Zend\Form\Form pairs.
+	 * @return type
+	 */
+	protected function _getForms()
+	{
+		if (empty($this->_forms)) {
+			$this->_forms = array();
+			foreach (array_merge($this->_getSideEntities(), array(static::BASE_FORM_NAME => $this->_getEntity())) as $key => $entity) {
+				$form = $this->_callForForm($this->_formConfigCallables, $key, function($key, $form, $entity) {
+							return $form;
+						}, array($key, $this->_toForm($entity), $entity));
+				$this->_forms[$key] = $form;
+			}
+		}
+		return $this->_forms;
+	}
+
+	/**
+	 * Gets param data for a form. The main entity gets all parameters, all side
+	 * entity forms will get the data in the param at index $formTag.
+	 * Example: when updating a
+	 * @param string $formTag
+	 * @return mixed
+	 */
 	protected function _getFormData($formTag)
 	{
 		if ($formTag != static::BASE_FORM_NAME) {
@@ -190,14 +277,43 @@ class Update extends BaseService implements UpdateInterface
 	}
 
 	/**
+	 * Allows you to set/override an individual parameter value
+	 * @param string $key
+	 * @param mixed $value
+	 * @param string|null $formTag
+	 * @return \Application\Service\Update
+	 */
+	protected function _setFormData($key, $value, $formTag = null)
+	{
+		if (empty($formTag) || $formTag == static::BASE_FORM_NAME) {
+			$this->_params[$key] = $value;
+		} else {
+			$this->_params[$formTag][$key] = $value;
+		}
+		return $this;
+	}
+
+	/**
+	 * Allows subclasses to skip validating side entity forms as desired.
+	 * @param string $key
+	 * @param \Zend\Form\Form $form
+	 * @return boolean
+	 */
+	protected function _validateForm($key, Form $form)
+	{
+		return $form->isValid();
+	}
+
+	/**
 	 * Validates the form
+	 * @return Update
 	 */
 	protected function _validate()
 	{
 		$this->_success = true;
 		/* @var $form Form */
-		foreach ($this->_forms as $form) {
-			if (!$form->isValid()) {
+		foreach ($this->_getForms() as $key => $form) {
+			if (!$this->_callForForm($this->_formValidateCallables, $key, array($this, '_validateForm'), array($key, $form))) {
 				$this->_success = false;
 				$this->_mergeFormErrorMessages($form->getMessages());
 			}
@@ -210,6 +326,11 @@ class Update extends BaseService implements UpdateInterface
 		return $this;
 	}
 
+	/**
+	 * When validating multiple forms, this merges any error messages into a single
+	 * array to be returned.
+	 * @param type $messages
+	 */
 	protected function _mergeFormErrorMessages($messages)
 	{
 		if (!isset($this->_message)) {
@@ -218,6 +339,10 @@ class Update extends BaseService implements UpdateInterface
 		$this->_message = array_merge($this->_message, $messages);
 	}
 
+	/**
+	 * Hook to allow for any action after the form validation.
+	 * @return \Application\Service\Update
+	 */
 	protected function _postFormValidate()
 	{
 		return $this;
@@ -225,6 +350,7 @@ class Update extends BaseService implements UpdateInterface
 
 	/**
 	 * Saves the update
+	 * @return Update
 	 */
 	protected function _save()
 	{
@@ -241,6 +367,11 @@ class Update extends BaseService implements UpdateInterface
 		return $this;
 	}
 
+	/**
+	 * Returns the main entity to update.
+	 * @return Base
+	 * @throws UnsetEntityException
+	 */
 	protected function _getEntity()
 	{
 		if (empty($this->_entity)) {
@@ -249,27 +380,50 @@ class Update extends BaseService implements UpdateInterface
 		return $this->_entity;
 	}
 
+	/**
+	 *
+	 * @return string
+	 */
 	protected function _getSuccessMessage()
 	{
 		return 'Saved!';
 	}
 
+	/**
+	 *
+	 * @return array
+	 */
 	protected function _getParams()
 	{
 		return $this->_params;
 	}
 
+	/**
+	 *
+	 * @param string $index
+	 * @return mixed
+	 */
 	protected function _getParam($index)
 	{
 		return isset($this->_params[$index]) ? $this->_params[$index] : null;
 	}
 
+	/**
+	 *
+	 * @param string $formName
+	 * @return boolean
+	 */
 	protected function _hasValidationGroup($formName)
 	{
 		$group = $this->_getValidationGroup($formName);
 		return !empty($group);
 	}
 
+	/**
+	 *
+	 * @param string $formName
+	 * @return array|null
+	 */
 	protected function _getValidationGroup($formName)
 	{
 		return isset($this->_validationGroup[$formName]) ? $this->_validationGroup[$formName] : null;
@@ -303,6 +457,23 @@ class Update extends BaseService implements UpdateInterface
 	protected function _url($routeName, $routeParams = array())
 	{
 		return $this->getServiceLocator()->get('router')->assemble($routeParams, array('name' => $routeName));
+	}
+
+	/**
+	 *
+	 * @param array $array
+	 * @param string $key
+	 * @param callable $default
+	 * @return mixed
+	 * @throws \InvalidArgumentException
+	 */
+	protected function _callForForm(array $array, $key, $default, array $params = array())
+	{
+		$callable = isset($array[$key]) ? $array[$key] : $default;
+		if (!is_callable($callable)) {
+			throw new \InvalidArgumentException('No valid callable was found.');
+		}
+		return call_user_func_array($callable, $params);
 	}
 
 }
