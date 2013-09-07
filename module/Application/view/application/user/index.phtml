@@ -4,7 +4,8 @@ use Application\Controller\UserController;
 use Application\View\Helper\PageNg;
 ?>
 
-<h1>Manage Users</h1>
+<h1>Manage Users <a class="btn btn-success pull-right" href="<?php echo $this->url(UserController::ROUTE_USER_MANAGE, array('action' => 'create')); ?>"><span class="glyphicon glyphicon-plus"></span> Create</a>
+</h1>
 <?php
 echo $this->pageNg(array(
 	PageNg::OPTION_DATA => $this->page,

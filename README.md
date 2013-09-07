@@ -12,7 +12,9 @@ Installation
 ------------
 
 * Create a fork of this repository.
+* Install Composer (if you don't already have it) and run composer update to install dependencies.
 * Copy the file config/autoload/doctrine.local.php.dist to config/autoload/doctrine.local.php and fill in the database connection settings accordingly.
+* Import db/schema.sql
 * Start development!
 
 

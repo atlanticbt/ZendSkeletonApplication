@@ -2,7 +2,8 @@
 
 namespace Application\Service;
 
-use Application\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
+use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
+//use Application\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use Zend\Form\Annotation\AnnotationBuilder;
 
 /**
@@ -23,7 +24,7 @@ class EntityToForm extends BaseService
 			// use the entity annotations and create a zend form object
 			$form = $builder->createForm($className);
 			// set strategy for how to transfer data between form elements and
-			$form->setHydrator(new DoctrineHydrator($this->_entityManager(), $className, true));
+			$form->setHydrator(new DoctrineHydrator($this->_entityManager(), $className));
 			// populate form with entity
 			$form->bind($entity);
 			return $form;

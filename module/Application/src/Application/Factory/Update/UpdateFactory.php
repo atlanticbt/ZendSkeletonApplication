@@ -49,6 +49,11 @@ abstract class UpdateFactory extends BaseFactory implements UpdateFactoryInterfa
 		return $this->_getParam('id');
 	}
 
+	/**
+	 * Attempts to determine if the current request is updating an existing entity
+	 * based on the return values of the _getEntityClass and _getEntityIdParam methods.
+	 * @return null|\Application\Entity\Base
+	 */
 	protected function _getEntity()
 	{
 		$class = $this->_getEntityClass();
@@ -57,6 +62,23 @@ abstract class UpdateFactory extends BaseFactory implements UpdateFactoryInterfa
 			return null;
 		}
 		return $this->_entityManager()->find($class, $id);
+	}
+
+	/**
+	 * Instantiates and persists a new entity based on the class returned by _getEntityClass
+	 * Automatically persists the entity.
+	 * @return \Application\Factory\Update\class
+	 * @throws \InvalidArgumentException
+	 */
+	protected function _getNewEntity()
+	{
+		$class = '\\' . $this->_getEntityClass();
+		if (!class_exists($class)) {
+			throw new \InvalidArgumentException('No entity of class "' . $class . '" available for instatiation.');
+		}
+		$entity = new $class();
+		$this->_entityManager()->persist($entity);
+		return $entity;
 	}
 
 }

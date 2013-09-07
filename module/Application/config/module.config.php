@@ -101,6 +101,7 @@ return array(
 			// update
 			'user_update_factory' => 'Application\Factory\Update\User',
 			'user_update_service' => 'Application\Service\Update\User',
+			'user_create_service' => 'Application\Service\Update\User\Create',
 			// search
 			'user_search_factory' => 'Application\Factory\Search\User',
 			'user_search_service' => 'Application\Service\Search\User',

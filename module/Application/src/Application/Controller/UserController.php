@@ -23,7 +23,17 @@ class UserController extends AbstractActionController
 		return $this->getRequest()->isPost() ? new JsonModel($data) : new ViewModel($data);
 	}
 
+	public function createAction()
+	{
+		return $this->_manageUserAction();
+	}
+
 	public function manageAction()
+	{
+		return $this->_manageUserAction();
+	}
+
+	protected function _manageUserAction()
 	{
 		/* @var $factory \Application\Factory\Update\User */
 		$factory = $this->getServiceLocator()->get('user_update_factory');

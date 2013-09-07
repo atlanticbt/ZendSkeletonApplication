@@ -276,6 +276,16 @@ class Update extends BaseService implements UpdateInterface
 		return $this->_getParams();
 	}
 
+	protected function _setFormData($key, $value, $formTag = null)
+	{
+		if (empty($formTag) || $formTag == static::BASE_FORM_NAME) {
+			$this->_params[$key] = $value;
+		} else {
+			$this->_params[$formTag][$key] = $value;
+		}
+		return $this;
+	}
+
 	/**
 	 * Allows you to set/override an individual parameter value
 	 * @param string $key
