@@ -18,19 +18,20 @@ function ManageUserCtrl($scope, $http, abtPost) {
 
 	$scope.$on('uploadStarted', function() {
 		$scope.uploading = true;
-		console.log('started', arguments);
 	});
 	$scope.$on('uploadStopped', function(event, upload) {
 		$scope.uploading = false;
 		if (upload && upload.result) {
 			var data = upload.result;
-			if (data.failures) {
+			if (data.failures && data.failures.length > 0) {
+				common.alert('Encountered ' + data.failures.length + ' errors')
 				angular.forEach(data.failures, function(fail) {
 					console.log('fail', fail);
+					common.formErrors(fail);
 				});
 			}
-			if (data.successes) {
-				console.log(data.successes);
+			if (data.successes && data.successes.length) {
+				common.alert('<ul><li>' + data.successes.join('</li><li>') + '</li></ul>', {type: 'success'});
 			}
 		}
 	});

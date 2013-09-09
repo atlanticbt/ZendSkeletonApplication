@@ -16,5 +16,17 @@ interface UserInterface extends TrackedInterface, ZfcUserInterface
 	 * @return string
 	 */
 	public function getRole();
+
+	/**
+	 * @return string
+	 */
+	public function getLoginHash();
+
+	/**
+	 *
+	 * @param string $hash
+	 * @return UserInterface
+	 */
+	public function setLoginHash($hash);
 }
 

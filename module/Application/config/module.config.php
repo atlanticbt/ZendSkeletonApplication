@@ -74,6 +74,23 @@ return array(
 				),
 				'may_terminate' => true,
 			),
+			UserController::ROUTE_RESET => array(
+				'type' => 'Segment',
+				'options' => array(
+					'route' => '/reset/:userHash/:loginHash[/:reset]',
+					'constraints' => array(
+						'userHash' => '[a-zA-Z0-9_-]+',
+						'loginHash' => '[a-zA-Z0-9_-]+',
+						'reset' => '[0|1]',
+					),
+					'defaults' => array(
+						'__NAMESPACE__' => 'Application\Controller',
+						'controller' => 'User',
+						'action' => 'reset',
+					),
+				),
+				'may_terminate' => true,
+			),
 		),
 	),
 	'service_manager' => array(
@@ -94,6 +111,9 @@ return array(
 			},
 		),
 		'invokables' => array(
+			'email' => 'Application\Service\Email',
+			'token' => 'Application\Service\Token',
+			'invitation' => 'Application\Service\Invitation',
 			'permission_service' => 'Application\Service\Permission',
 			'route_service' => 'Application\Service\RouteListener',
 			'page_vars' => 'Application\Service\PageVars',
@@ -104,6 +124,7 @@ return array(
 			'user_update_factory' => 'Application\Factory\Update\User',
 			'user_update_service' => 'Application\Service\Update\User',
 			'user_create_service' => 'Application\Service\Update\User\Create',
+			'user_reset_service' => 'Application\Service\Update\User\Reset',
 			// search
 			'user_search_factory' => 'Application\Factory\Search\User',
 			'user_search_service' => 'Application\Service\Search\User',

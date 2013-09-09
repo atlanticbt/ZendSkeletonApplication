@@ -2,7 +2,7 @@
 
 namespace Application\Service;
 
-use Application\Entity\Base;
+use Application\Entity\BaseInterface;
 
 interface UpdateInterface
 {
@@ -11,10 +11,10 @@ interface UpdateInterface
 	 * Typically set by the UpdateFactory which determines what entity is
 	 * being updated.
 	 *
-	 * @param \Application\Entity\Base $entity
+	 * @param \Application\Entity\BaseInterface $entity
 	 * @return UpdateInterface
 	 */
-	public function setEntity(Base $entity);
+	public function setEntity(BaseInterface $entity);
 
 	/**
 	 * Typically set by UpdateFactory to inject whatever data is needed to

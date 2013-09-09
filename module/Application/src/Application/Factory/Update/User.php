@@ -12,8 +12,15 @@ class User extends UpdateFactory
 
 	protected function _getUpdateService()
 	{
+		$serviceKey = 'user_update_service';
+		if ($this->creating()) {
+			$serviceKey = 'user_create_service';
+		} else if ($this->_getParam('action') == 'reset') {
+			$serviceKey = 'user_reset_service';
+		}
+
 		/* @var $service \Application\Service\Update\User */
-		$service = $this->getServiceLocator()->get($this->creating() ? 'user_create_service' : 'user_update_service');
+		$service = $this->getServiceLocator()->get($serviceKey);
 		$service->isBatch($this->_getParam('batch') == 1);
 		return $service;
 	}

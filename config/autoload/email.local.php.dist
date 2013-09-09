@@ -1,0 +1,10 @@
+<?php
+
+return array(
+	'invite_email' => array(
+		'from' => 'no-reply@domain.com',
+		'subject' => 'Company Invitation',
+		'company_name' => 'Some Company',
+		'invite_email_partial' => 'partials/email/invite.phtml',
+	),
+);

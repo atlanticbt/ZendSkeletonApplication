@@ -44,6 +44,12 @@ class Create extends UserUpdateService
 	 */
 	protected $_headings = array();
 
+	/**
+	 *
+	 * @var \Application\Service\Invitation
+	 */
+	protected $_inviteService;
+
 	public function __construct()
 	{
 		$this->_validationGroup = array(
@@ -92,6 +98,17 @@ class Create extends UserUpdateService
 	protected function _prePrepare()
 	{
 		$this->_setFormData('state', UserEntity::STATE_ACTIVE);
+	}
+
+	protected function _postFormValidate()
+	{
+		if ($this->success()) {
+			if (!$this->_getInviteService()->send($this->_getEntity())) {
+				$this->_success = false;
+				$this->_message = 'Unable to send an invitation email to ' . $this->_getEntity()->getEmail();
+			}
+		}
+		return parent::_postFormValidate();
 	}
 
 	public function update()
@@ -225,6 +242,18 @@ class Create extends UserUpdateService
 	protected function _getSuccessMessage()
 	{
 		return 'Created user ' . $this->_entity->getEmail();
+	}
+
+	/**
+	 *
+	 * @return \Application\Service\Invitation
+	 */
+	protected function _getInviteService()
+	{
+		if (!isset($this->_inviteService)) {
+			$this->_inviteService = $this->getServiceLocator()->get('invitation');
+		}
+		return $this->_inviteService;
 	}
 
 }

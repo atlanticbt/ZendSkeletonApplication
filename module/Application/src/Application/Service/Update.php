@@ -2,6 +2,7 @@
 
 namespace Application\Service;
 
+use Application\Entity\BaseInterface;
 use Application\Entity\Base;
 use Application\Service\EntityToForm;
 use Zend\Form\Form;
@@ -81,10 +82,10 @@ class Update extends BaseService implements UpdateInterface
 
 	/**
 	 *
-	 * @param \Application\Entity\Base $entity
+	 * @param \Application\Entity\BaseInterface $entity
 	 * @return \Application\Service\Update
 	 */
-	public function setEntity(Base $entity)
+	public function setEntity(BaseInterface $entity)
 	{
 		$this->_entity = $entity;
 		return $this;

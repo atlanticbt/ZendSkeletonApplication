@@ -11,6 +11,7 @@ return array(
 				'home' => null,
 				UserController::ROUTE_LOGIN => null,
 				UserController::ROUTE_REGISTER => null,
+				ManageUserController::ROUTE_RESET => null,
 			),
 			'bans' => array(),
 			'parents' => array(),

@@ -29,7 +29,7 @@ class User extends Tracked implements UserInterface
 	 * @Annotation\Filter({"name": "StringTrim"})
 	 * @Annotation\Validator({"name": "StringLength", "options": {"min": 1,"max": 256, "messages": {\Zend\Validator\StringLength::INVALID: "Please provide a display name"}}})
 	 *
-	 * @var type
+	 * @var string
 	 */
 	protected $displayName;
 
@@ -41,7 +41,7 @@ class User extends Tracked implements UserInterface
 	 * @Annotation\Options({"label":"Email"})
 	 * @Annotation\Validator({"name": "EmailAddress", "options": {"messages": {Zend\Validator\EmailAddress::INVALID_FORMAT: "Please provide a valid email address."}}})
 	 *
-	 * @var type
+	 * @var string
 	 */
 	protected $email;
 
@@ -50,9 +50,18 @@ class User extends Tracked implements UserInterface
 	 * @ORM\Column(type="string", name="hash", length=256);
 	 * @Annotation\Exclude()
 	 *
-	 * @var type
+	 * @var string
 	 */
 	protected $password;
+
+	/**
+	 *
+	 * @ORM\Column(type="string", name="login_hash", length=256);
+	 * @Annotation\Exclude()
+	 *
+	 * @var string
+	 */
+	protected $loginHash;
 
 	/**
 	 *
@@ -64,7 +73,7 @@ class User extends Tracked implements UserInterface
 	 * @Annotation\Filter({"name": "StringTrim"})
 	 * @Annotation\Validator({"name": "StringLength", "options": {"min": 1,"max": 256, "messages": {\Zend\Validator\StringLength::INVALID: "Please provide a user name"}}})
 	 *
-	 * @var type
+	 * @var string
 	 */
 	protected $username;
 
@@ -84,7 +93,7 @@ class User extends Tracked implements UserInterface
 	 * @Annotation\Filter({"name": "StringTrim"})
 	 * @Annotation\Validator({"name": "StringLength", "options": {"min": 1,"max": 8}})
 	 *
-	 * @var type
+	 * @var string
 	 */
 	protected $state;
 
@@ -167,6 +176,17 @@ class User extends Tracked implements UserInterface
 	public function getRole()
 	{
 		return Permission::ROLE_USER;
+	}
+
+	public function getLoginHash()
+	{
+		return $this->loginHash;
+	}
+
+	public function setLoginHash($hash)
+	{
+		$this->loginHash = $hash;
+		return $this;
 	}
 
 }

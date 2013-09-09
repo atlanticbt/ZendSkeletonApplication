@@ -68,5 +68,15 @@ class UserNull extends TrackedNull implements UserInterface
 		return Permission::ROLE_GUEST;
 	}
 
+	public function getLoginHash()
+	{
+		return null;
+	}
+
+	public function setLoginHash($hash)
+	{
+		return $this;
+	}
+
 }
 

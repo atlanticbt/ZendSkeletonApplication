@@ -1,0 +1,6 @@
+<h1>Your <?php echo ucfirst($this->companyName) ?> Invitation</h1>
+<p>
+	You are receiving this email because a <?php echo $this->companyName ?> representative has entered you into the system. This is an invite to join something great!
+	To set up your <strong><?php echo $this->companyName ?> Account</strong>, <a href="<?php echo $this->resetUrl; ?>">click here</a> or paste the following URL into your browser.<br /><br />
+	<?php echo $this->resetUrl; ?>
+</p>
