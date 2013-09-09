@@ -243,6 +243,11 @@ class Update extends BaseService implements UpdateInterface
 		return $this->_sideEntities;
 	}
 
+	protected function _getFormConfigCallables()
+	{
+		return $this->_formConfigCallables;
+	}
+
 	/**
 	 * Returns an associative array of 'key' => \Zend\Form\Form pairs.
 	 * @return type
@@ -252,7 +257,7 @@ class Update extends BaseService implements UpdateInterface
 		if (empty($this->_forms)) {
 			$this->_forms = array();
 			foreach (array_merge($this->_getSideEntities(), array(static::BASE_FORM_NAME => $this->_getEntity())) as $key => $entity) {
-				$form = $this->_callForForm($this->_formConfigCallables, $key, function($key, $form, $entity) {
+				$form = $this->_callForForm($this->_getFormConfigCallables(), $key, function($key, $form, $entity) {
 							return $form;
 						}, array($key, $this->_toForm($entity), $entity));
 				$this->_forms[$key] = $form;
@@ -274,16 +279,6 @@ class Update extends BaseService implements UpdateInterface
 			return $this->_getParam($formTag);
 		}
 		return $this->_getParams();
-	}
-
-	protected function _setFormData($key, $value, $formTag = null)
-	{
-		if (empty($formTag) || $formTag == static::BASE_FORM_NAME) {
-			$this->_params[$key] = $value;
-		} else {
-			$this->_params[$formTag][$key] = $value;
-		}
-		return $this;
 	}
 
 	/**

@@ -5,6 +5,9 @@ namespace Application\Service;
 use Zend\Permissions\Acl\Acl;
 use Zend\Permissions\Acl\Resource\GenericResource;
 
+/**
+ * service: permission_service
+ */
 class Permission extends BaseService
 {
 

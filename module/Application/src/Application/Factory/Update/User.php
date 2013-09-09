@@ -8,10 +8,14 @@ namespace Application\Factory\Update;
 class User extends UpdateFactory
 {
 
+	protected $_creating = false;
+
 	protected function _getUpdateService()
 	{
-		$service = $this->_isCreatingUser() ? 'user_create_service' : 'user_update_service';
-		return $this->getServiceLocator()->get($service);
+		/* @var $service \Application\Service\Update\User */
+		$service = $this->getServiceLocator()->get($this->creating() ? 'user_create_service' : 'user_update_service');
+		$service->isBatch($this->_getParam('batch') == 1);
+		return $service;
 	}
 
 	protected function _getEntityClass()
@@ -26,7 +30,7 @@ class User extends UpdateFactory
 
 	protected function _getEntity()
 	{
-		if ($this->_isCreatingUser()) {
+		if ($this->creating()) {
 			return $this->_getNewEntity();
 		}
 		$entity = parent::_getEntity();
@@ -36,9 +40,21 @@ class User extends UpdateFactory
 		return $entity;
 	}
 
-	protected function _isCreatingUser()
+	protected function _getNewEntity()
 	{
-		return $this->_getParam('action') == 'create';
+		$roleFactory = new \Application\Factory\Role();
+		$user = $roleFactory->createUser($this->_getParam('role'));
+		$this->_entityManager()->persist($user);
+		return $user;
+	}
+
+	public function creating($creating = null)
+	{
+		if ($creating === null) {
+			return $this->_creating;
+		}
+		$this->_creating = $creating;
+		return $this;
 	}
 
 }

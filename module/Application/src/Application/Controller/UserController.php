@@ -25,7 +25,7 @@ class UserController extends AbstractActionController
 
 	public function createAction()
 	{
-		return $this->_manageUserAction();
+		return $this->_manageUserAction(true);
 	}
 
 	public function manageAction()
@@ -33,12 +33,12 @@ class UserController extends AbstractActionController
 		return $this->_manageUserAction();
 	}
 
-	protected function _manageUserAction()
+	protected function _manageUserAction($creating = false)
 	{
 		/* @var $factory \Application\Factory\Update\User */
 		$factory = $this->getServiceLocator()->get('user_update_factory');
 		/* @var $service \Application\Service\Update\User */
-		$service = $factory->getService();
+		$service = $factory->creating($creating)->getService();
 		if ($this->getRequest()->isPost()) {
 			$service->update();
 			return $this->jsonResponse($service->success(), $service->message(), $service->responseData());

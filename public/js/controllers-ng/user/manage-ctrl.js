@@ -14,4 +14,14 @@ function ManageUserCtrl($scope, $http, abtPost) {
 		});
 	}
 	$scope.form = {};
+	$scope.uploading = false;
+
+	$scope.$on('uploadStarted', function() {
+		$scope.uploading = true;
+		console.log('started', arguments);
+	});
+	$scope.$on('uploadStopped', function() {
+		$scope.uploading = false;
+		console.log('stopped', arguments);
+	});
 }

@@ -149,9 +149,26 @@ ABTApp.service('abtPost', function($http) {
 			return this;
 		}
 	};
-});
+}).service('uploadService', function($rootScope) {
+	var upload = {
+		inProgress: false
+	};
 
-;
+	return {
+		info: function() {
+			return upload;
+		},
+		notifyUploadStarted: function(event, data) {
+			upload.inProgress = true;
+			$rootScope.$broadcast('uploadStarted', data);
+		},
+		notifyUploadStopped: function(event, data) {
+			upload.inProgress = false;
+
+			$rootScope.$broadcast('uploadStopped', data);
+		}
+	};
+});
 
 /**
  * Generic autocomplete directive.
@@ -221,5 +238,90 @@ ABTApp.directive('autoComplete', function($rootScope) {
 				pageFilterService.setFilter('order', (nowDescending ? '-' : '') + name);
 			}).addClass('tbl-sort');
 		}
+	};
+})
+		/**
+		 * This directive activates the file upload plugin functionality for a file form element.
+		 *
+		 * Adding 'angular-upload' as the element attribute will cause that element to be
+		 * targeted by this directive.
+		 * example: <input type="file" angular-upload />
+		 *
+		 * You can supply a value to this attribute which will be used as post data
+		 * to be sent along with the file upload as such:
+		 * example: <input type="file" angular-upload="{'paramOne':'paramOneValue'}" />
+		 *
+		 * Additionally, you can supply another attribute to point to a scope function
+		 *
+		 * <input type="file" angular-upload="{'paramOne':'paramOneValue'}" data-on-upload="someFunctionName" />
+		 *
+		 * This will cause $scope.someFunctionName() to be invoked at the time of upload.
+		 * The function gets the following parameters: the calculated data from the angular-upload attribute (if any)
+		 * in the form of [{name: 'paramOne', value: 'paramOneValue'}], the file upload element, and the object containing
+		 * all the element's attributes/values.
+		 *
+		 */
+		.directive('angularUpload', function($timeout, uploadService) {
+	return function(scope, element, attrs) {
+		var data = [];
+		try {
+			if (attrs.angularUpload) {
+				var uploadData = $.parseJSON(attrs.angularUpload);
+				$.each(uploadData, function(key, value) {
+					data.push({name: key, value: value});
+				});
+			}
+		} catch (e) {
+			console.error('Unable to parse file upload data', e);
+		}
+		// allow scope function use too
+		var onUpload = null;
+		if (attrs.onUpload) {
+			onUpload = scope[attrs.onUpload];
+		}
+		var url = attrs.destination ? attrs.destination : window.location.href;
+		var config = {};
+		try {
+			if (attrs.uploadConfig) {
+				$.extend(config, $.parseJSON(attrs.uploadConfig));
+			}
+		} catch (e) {
+			console.error('Unable to parse file upload config', e);
+		}
+		var doneFn = (attrs.onComplete && scope[attrs.onComplete] && typeof scope[attrs.onComplete] == 'function') ? scope[attrs.onComplete] : function() {
+		};
+		$(element).fileupload($.extend(config, {
+			url: url,
+			send: function(e, data) {
+				$timeout(function() {
+					uploadService.notifyUploadStarted(e, data);
+				}, 0);
+			},
+			formData: function() {
+				var runtimeData = [];
+				try {
+					var onUploadData = (typeof onUpload == 'function') ? onUpload(data, element, attrs) : {};
+					$.each(onUploadData, function(k, v) {
+						runtimeData.push({name: k, value: v});
+					});
+				} catch (e) {
+					console.errro('Unable to calculate runtime data');
+				}
+				return data.concat(runtimeData);
+			},
+			done: function(ev, data) {
+				try {
+					$timeout(function() {
+						doneFn(ev, data.result, data);
+					}, 0);
+				} catch (e) {
+				}
+			},
+			always: function(e, data) {
+				$timeout(function() {
+					uploadService.notifyUploadStopped(e, data);
+				}, 0);
+			}
+		}));
 	};
 });

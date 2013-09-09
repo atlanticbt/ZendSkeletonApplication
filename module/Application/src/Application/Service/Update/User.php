@@ -9,6 +9,11 @@ use Application\Service\Update;
  */
 class User extends Update
 {
-	
+
+	public function isBatch($batch = null)
+	{
+		return $this;
+	}
+
 }
 
