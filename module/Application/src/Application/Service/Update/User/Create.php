@@ -119,6 +119,8 @@ class Create extends UserUpdateService
 			$role = $this->_getParam('role');
 			// iterate over file contents
 			try {
+				// remove the currently persisted entity.
+				$this->_entityManager()->remove($this->_getEntity());
 				while (($data = fgetcsv($handle)) !== false) {
 					if (empty($data)) {
 						continue;
@@ -127,20 +129,21 @@ class Create extends UserUpdateService
 					if (!$this->_haveHeadings($data)) {
 						continue;
 					}
+					// cause forms to be recalculated
+					$this->_forms = null;
 					// set the parameter data to associative array
-					$this->_params = array_combine($this->_getRowKeys($data), $this->_getRowData($data));
+					$this->setParams(array_combine($this->_getRowKeys($data), $this->_getRowData($data)));
 					// create a new entity
-					$this->_entity = $roleFactory->createUser($role);
-					// persist it
+					$this->setEntity($roleFactory->createUser($role));
+					// persist the entity
 					$this->_entityManager()->persist($this->_entity);
 					// execute create logic on this row of data
-					$this->_prepare();
-					$this->_validate();
-					$this->_postValidate();
+					parent::update();
 					if ($this->success()) {
-						$this->_successes[] = $this->message() . var_export();
+						$this->_successes[] = $this->message();
 					} else {
 						$this->_failures[] = $this->message();
+						$this->_entityManager()->remove($this->_getEntity());
 					}
 				}
 			} catch (InvalidFileHeadingsException $e) {
@@ -221,12 +224,7 @@ class Create extends UserUpdateService
 
 	protected function _getSuccessMessage()
 	{
-		parent::_getSuccessMessage();
-	}
-
-	protected function _successData()
-	{
-		parent::_successData();
+		return 'Created user ' . $this->_entity->getEmail();
 	}
 
 }

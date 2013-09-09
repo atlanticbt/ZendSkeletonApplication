@@ -20,8 +20,18 @@ function ManageUserCtrl($scope, $http, abtPost) {
 		$scope.uploading = true;
 		console.log('started', arguments);
 	});
-	$scope.$on('uploadStopped', function() {
+	$scope.$on('uploadStopped', function(event, upload) {
 		$scope.uploading = false;
-		console.log('stopped', arguments);
+		if (upload && upload.result) {
+			var data = upload.result;
+			if (data.failures) {
+				angular.forEach(data.failures, function(fail) {
+					console.log('fail', fail);
+				});
+			}
+			if (data.successes) {
+				console.log(data.successes);
+			}
+		}
 	});
 }
