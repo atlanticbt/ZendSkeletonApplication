@@ -109,6 +109,9 @@ return array(
 						$sm->get('ZfcUser\Authentication\Storage\Db'), $sm->get('ZfcUser\Authentication\Adapter\AdapterChain')
 				);
 			},
+			'zfcuser_change_password_form' => function ($sm) {
+				return $sm->get('zfcuser_password_form_factory')->getForm();
+			},
 		),
 		'invokables' => array(
 			'email' => 'Application\Service\Email',
@@ -122,6 +125,9 @@ return array(
 			'event_hook' => 'Application\Service\EventHook',
 			'create_account_service' => 'Application\Service\CreateAccountListener',
 			/** user services * */
+			// override ZfcUser module functionality
+			'zfcuser_user_service' => 'Application\Service\ZfcUser\User',
+			'zfcuser_password_form_factory' => 'Application\Service\ZfcUser\PasswordForm',
 			// update
 			'user_update_factory' => 'Application\Factory\Update\User',
 			'user_update_service' => 'Application\Service\Update\User',

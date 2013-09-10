@@ -5,6 +5,7 @@ namespace Application\Service;
 use Zend\Permissions\Acl\Acl;
 use Zend\Mvc\MvcEvent;
 use ZfcUser\Controller\UserController;
+use Application\Entity\Base\UserInterface;
 
 class RouteListener extends BaseService
 {
@@ -33,7 +34,7 @@ class RouteListener extends BaseService
 				exit("({$requestedResource}) is available to you!");
 			}
 			// make sure the user is configured
-			return;
+			return $this->_checkUserConfigured($e, $user, $requestedResource, $requestedPrivilege);
 		} else if ($user->isNull()) {
 			if (static::DEBUG) {
 				exit("({$requestedResource}) is not available for guests.");
@@ -46,6 +47,15 @@ class RouteListener extends BaseService
 			}
 			// user is logged in and does not have permission.
 			return $this->_sendToRouteNamed($e, 'home');
+		}
+	}
+
+	protected function _checkUserConfigured(MvcEvent $e, UserInterface $user, $routeName, $action)
+	{
+		if ($user->getPassword() == null) {
+			if ($routeName != UserController::ROUTE_CHANGEPASSWD) {
+				return $this->_sendToRouteNamed($e, UserController::ROUTE_CHANGEPASSWD);
+			}
 		}
 	}
 
