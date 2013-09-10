@@ -77,7 +77,7 @@ return array(
 			UserController::ROUTE_RESET => array(
 				'type' => 'Segment',
 				'options' => array(
-					'route' => '/reset/:userHash/:loginHash[/:reset]',
+					'route' => '/reset/:userHash/:loginHash[/[:reset]]',
 					'constraints' => array(
 						'userHash' => '[a-zA-Z0-9_-]+',
 						'loginHash' => '[a-zA-Z0-9_-]+',
