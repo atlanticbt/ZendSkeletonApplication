@@ -119,6 +119,8 @@ return array(
 			'page_vars' => 'Application\Service\PageVars',
 			'page_response' => 'Application\Service\PageResponse',
 			'e2f' => 'Application\Service\EntityToForm',
+			'event_hook' => 'Application\Service\EventHook',
+			'create_account_service' => 'Application\Service\CreateAccountListener',
 			/** user services * */
 			// update
 			'user_update_factory' => 'Application\Factory\Update\User',

@@ -22,7 +22,7 @@ class Invitation extends BaseService
 	 * @param type $user
 	 * @return type
 	 */
-	public function send(UserInterface $user)
+	public function send(UserInterface $user, $reset = true)
 	{
 		if ($user->isNull()) {
 			return $this;
@@ -41,7 +41,7 @@ class Invitation extends BaseService
 
 		$htmlMarkup = $this->getServiceLocator()
 				->get('viewrenderer')
-				->render($config['invite_email_partial'], array('resetUrl' => $pair->url(true), 'user' => $user, 'companyName' => $config['company_name']));
+				->render($config['invite_email_partial'], array('resetUrl' => $pair->url($reset), 'user' => $user, 'companyName' => $config['company_name']));
 
 
 		/* @var $email \Application\Service\Email */

@@ -103,7 +103,9 @@ class Create extends UserUpdateService
 	protected function _postFormValidate()
 	{
 		if ($this->success()) {
-			if (!$this->_getInviteService()->send($this->_getEntity())) {
+			/* @var $eventHook \Application\Service\EventHook */
+			$eventHook = $this->getServiceLocator()->get('event_hook');
+			if ($eventHook->trigger('register', $this, array('user' => $this->_getEntity(), 'form' => $this->form()))->wasStopped()) {
 				$this->_success = false;
 				$this->_message = 'Unable to send an invitation email to ' . $this->_getEntity()->getEmail();
 			}

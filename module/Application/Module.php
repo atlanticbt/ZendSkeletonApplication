@@ -21,8 +21,12 @@ class Module
 		$eventManager = $e->getApplication()->getEventManager();
 		$moduleRouteListener = new ModuleRouteListener();
 		$moduleRouteListener->attach($eventManager);
+		$serviceManager = $e->getApplication()->getServiceManager();
 		// enforcing ACL in routing.
-		$e->getApplication()->getEventManager()->attach(MvcEvent::EVENT_ROUTE, array($e->getApplication()->getServiceManager()->get('route_service'), 'onRoute'));
+		$e->getApplication()->getEventManager()->attach(MvcEvent::EVENT_ROUTE, array($serviceManager->get('route_service'), 'onRoute'));
+		// listen for user creation, send invite
+		/* @var $createAccount \Application\Service\CreateAccountListener */
+		$serviceManager->get('create_account_service')->latch();
 	}
 
 	public function getConfig()
