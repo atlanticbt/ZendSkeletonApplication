@@ -52,6 +52,9 @@ class RouteListener extends BaseService
 
 	protected function _checkUserConfigured(MvcEvent $e, UserInterface $user, $routeName, $action)
 	{
+		if ($user->isNull()) {
+			return;
+		}
 		if ($user->getPassword() == null) {
 			if ($routeName != UserController::ROUTE_CHANGEPASSWD) {
 				return $this->_sendToRouteNamed($e, UserController::ROUTE_CHANGEPASSWD);
