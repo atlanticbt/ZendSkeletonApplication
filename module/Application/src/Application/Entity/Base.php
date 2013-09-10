@@ -82,7 +82,7 @@ abstract class Base implements BaseInterface
 		return $entity;
 	}
 
-	protected function _nullAdd(ArrayCollection $collection, BaseInterface $entity)
+	protected function _nullAdd(\Doctrine\Common\Collections\Collection $collection, BaseInterface $entity)
 	{
 		if (!$entity->isNull()) {
 			$collection->add($entity);
