@@ -9,21 +9,34 @@ $this->inlineScript()->appendFile('/js/controllers-ng/user/manage-ctrl.js')
 ?>
 <div ng-controller="ManageUserCtrl" <?php echo $this->initNg('setUser', $this->entity, true, true); ?>>
 	<h1>Create User</h1>
-	<?php
-	echo $this->partial('form/form.phtml', array(
-		'form' => $this->form,
-		'url' => $this->url(ManageUserController::ROUTE_USER_MANAGE, array('action' => 'create')),
-		'elements' => array('email', 'username')
-	));
-	?>
-	<div ng-show="!uploading">
-		<input ng-disabled="uploading" type="file" name="upload_invites" angular-upload='{"batch":1}' />
+	<div class="row">
+		<ul class="nav nav-tabs">
+			<li ng-class="{active:!bulkUpload}"><a href="javascript:void(null)" ng-click="bulkUpload = false">Single User</a></li>
+			<li ng-class="{active: bulkUpload}"><a href="javascript:void(null)" ng-click="bulkUpload = true">Upload File</a></li>
+		</ul>
 	</div>
-	<div ng-show="uploading">
-		<div class="progress progress-striped active progress-bar-success">
-			<div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-				<span class="sr-only">Uploading...</span>
+	<div class='row'>
+		<div ng-hide="bulkUpload">
+			<?php
+			echo $this->partial('form/form.phtml', array(
+				'form' => $this->form,
+				'url' => $this->url(ManageUserController::ROUTE_USER_MANAGE, array('action' => 'create')),
+				'elements' => array('email', 'username')
+			));
+			?>
+		</div>
+		<div ng-show="bulkUpload" class="row">
+			<div ng-show="!uploading">
+				<input ng-disabled="uploading" type="file" name="upload_invites" angular-upload='{"batch":1}' />
+			</div>
+			<div ng-show="uploading">
+				<div class="progress progress-striped active progress-bar-success">
+					<div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+						<span class="sr-only">Uploading...</span>
+					</div>
+				</div>
 			</div>
 		</div>
+
 	</div>
 </div>

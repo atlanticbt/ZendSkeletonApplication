@@ -29,13 +29,17 @@ return array(
 			'parents' => array(Permission::ROLE_GUEST),
 		),
 		Permission::ROLE_ADMIN => array(
-			'permissions' => array(),
+			'permissions' => array(
+				ManageUserController::ROUTE_USER_MANAGE => null,
+				Permission::RESOURCE_INVITE => array(Permission::ROLE_USER),
+			),
 			'bans' => array(),
 			'parents' => array(Permission::ROLE_USER),
 		),
 		Permission::ROLE_SUPER => array(
 			'permissions' => array(
 				ManageUserController::ROUTE_USER_MANAGE => null,
+				Permission::RESOURCE_INVITE => array(Permission::ROLE_USER, Permission::ROLE_ADMIN, Permission::ROLE_SUPER),
 			),
 			'bans' => array(),
 			'parents' => array(Permission::ROLE_ADMIN),

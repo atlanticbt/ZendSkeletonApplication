@@ -23,7 +23,10 @@ class UserController extends AbstractActionController
 		/* @var $factory \Application\Factory\Search\User */
 		$factory = $this->getServiceLocator()->get('user_search_factory');
 		$data = $factory->getService()->results();
-		return $this->getRequest()->isPost() ? new JsonModel($data) : new ViewModel($data);
+		/* @var $permission \Application\Service\Permission */
+		$permission = $this->getServiceLocator()->get('permission_service');
+
+		return $this->getRequest()->isPost() ? new JsonModel($data) : new ViewModel(array_merge($data, array('inviteRoles' => $permission->getAccessibleRoles())));
 	}
 
 	/**
@@ -47,6 +50,11 @@ class UserController extends AbstractActionController
 
 	public function createAction()
 	{
+		/* @var $permission \Application\Service\Permission */
+		$permission = $this->getServiceLocator()->get('permission_service');
+		if (!$permission->canInvite($this->getEvent()->getRouteMatch()->getParam('role'))) {
+			return $this->redirect()->toRoute(static::ROUTE_USER_MANAGE);
+		}
 		return $this->_manageUserAction(true);
 	}
 

@@ -11,6 +11,7 @@ use Zend\Permissions\Acl\Resource\GenericResource;
 class Permission extends BaseService
 {
 
+	const RESOURCE_INVITE = 'invite-resource';
 	const ROLE_GUEST = 'guest';
 	const ROLE_USER = 'user';
 	const ROLE_ADMIN = 'admin';
@@ -93,6 +94,36 @@ class Permission extends BaseService
 			$this->_acl = $this->_buildAcl();
 		}
 		return $this->_acl;
+	}
+
+	public function getRoles()
+	{
+		return array(
+			static::ROLE_USER => 'User',
+			static::ROLE_ADMIN => 'Admin',
+			static::ROLE_SUPER => 'Super User',
+		);
+	}
+
+	public function allowed($resource, $privilege = null)
+	{
+		return $this->getAcl()->isAllowed($this->_currentUser()->getRole(), $resource, $privilege);
+	}
+
+	public function canInvite($role)
+	{
+		return $this->allowed(static::RESOURCE_INVITE, $role);
+	}
+
+	public function getAccessibleRoles()
+	{
+		$permittedRoles = array();
+		foreach ($this->getRoles() as $role => $roleName) {
+			if ($this->canInvite($role)) {
+				$permittedRoles[] = array('role' => $role, 'name' => $roleName);
+			}
+		}
+		return $permittedRoles;
 	}
 
 }

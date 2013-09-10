@@ -4,7 +4,17 @@ use Application\Controller\UserController;
 use Application\View\Helper\PageNg;
 ?>
 
-<h1>Manage Users <a class="btn btn-success pull-right" href="<?php echo $this->url(UserController::ROUTE_USER_MANAGE, array('action' => 'create')); ?>"><span class="glyphicon glyphicon-plus"></span> Create</a>
+<h1>
+	Manage Users
+	<div class="btn-group pull-right" <?php echo $this->initNg('roles', $this->inviteRoles); ?> ng-show="roles.length > 0">
+		<a ng-href="<?php echo $this->url(UserController::ROUTE_USER_MANAGE, array('action' => 'create')); ?>/{{roles[0].role}}" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span> Create</a>
+		<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+			<span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			<li ng-repeat="roleObject in roles"><a ng-href="<?php echo $this->url(UserController::ROUTE_USER_MANAGE, array('action' => 'create')); ?>/{{roleObject.role}}">{{roleObject.name}}</a></li>
+		</ul>
+	</div>
 </h1>
 <?php
 echo $this->pageNg(array(
