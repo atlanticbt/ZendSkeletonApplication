@@ -18,15 +18,15 @@ class FlashMessages extends AbstractHelper
 	protected $flashMessenger;
 
 	public function setFlashMessenger(FlashMessenger $flashMessenger)
-    {
+	{
 		$this->flashMessenger = $flashMessenger;
 	}
 
 	private $_nsMap = array(
-		'alert' => FlashMessenger::NAMESPACE_ERROR,
+		'danger' => FlashMessenger::NAMESPACE_ERROR,
 		'success' => FlashMessenger::NAMESPACE_SUCCESS,
-		'info' => FlashMessenger::NAMESPACE_INFO,
-		'default' => FlashMessenger::NAMESPACE_DEFAULT,
+		'warning' => FlashMessenger::NAMESPACE_INFO,
+		'info' => FlashMessenger::NAMESPACE_DEFAULT,
 	);
 
 	/**
@@ -35,7 +35,7 @@ class FlashMessages extends AbstractHelper
 	 * @return string
 	 */
 	private function _mapNameSpace($foundationClass)
-    {
+	{
 		if (isset($this->_nsMap[$foundationClass])) {
 			return $this->_nsMap[$foundationClass];
 		}
@@ -43,7 +43,7 @@ class FlashMessages extends AbstractHelper
 	}
 
 	public function __invoke($includeCurrentMessages = false)
-    {
+	{
 		$messages = array_combine(array_keys($this->_nsMap), array(array(), array(), array(), array(),));
 		foreach ($messages as $className => &$m) {
 			$ns = $this->_mapNameSpace($className);
@@ -56,4 +56,5 @@ class FlashMessages extends AbstractHelper
 
 		return $messages;
 	}
+
 }

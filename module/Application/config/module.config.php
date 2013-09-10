@@ -127,6 +127,7 @@ return array(
 			'user_update_service' => 'Application\Service\Update\User',
 			'user_create_service' => 'Application\Service\Update\User\Create',
 			'user_reset_service' => 'Application\Service\Update\User\Reset',
+			'user_forgot_service' => 'Application\Service\Update\User\Forgot',
 			// search
 			'user_search_factory' => 'Application\Factory\Search\User',
 			'user_search_service' => 'Application\Service\Search\User',

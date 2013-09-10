@@ -29,6 +29,27 @@ class UserController extends AbstractActionController
 		return $this->getRequest()->isPost() ? new JsonModel($data) : new ViewModel(array_merge($data, array('inviteRoles' => $permission->getAccessibleRoles())));
 	}
 
+	public function forgotAction()
+	{
+		if ($this->getRequest()->isPost()) {
+			try {
+				/* @var $factory \Application\Factory\Update\User */
+				$factory = $this->getServiceLocator()->get('user_update_factory');
+				/* @var $service \Application\Service\Update\User\Forgot */
+				$service = $factory->getService()->update();
+				if ($service->success()) {
+					$this->flashMessenger()->addSuccessMessage('A reset password email has been sent to your account.');
+				} else {
+					$this->flashMessenger()->addErrorMessage($service->message());
+				}
+			} catch (UnsetEntityException $e) {
+				$this->flashMessenger()->addErrorMessage('Unable to find a user with that email address.');
+			}
+			return $this->redirect()->toRoute(static::ROUTE_USER_MANAGE, array('action' => 'forgot'));
+		}
+		return new ViewModel();
+	}
+
 	/**
 	 * If the provided userHash and loginHash match that of a user, log them in
 	 * @return type

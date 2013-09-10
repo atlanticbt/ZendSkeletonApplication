@@ -1,0 +1,10 @@
+<?php foreach ($this->flashMessages() as $alertClass => $messages) : ?>
+	<?php if (count($messages)) : ?>
+		<?php foreach ($messages as $message) : ?>
+			<div class="alert alert-dismissable alert-<?= $alertClass ?>">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				<?php echo $message; ?>
+			</div>
+		<?php endforeach; ?>
+	<?php endif; ?>
+<?php endforeach; ?>

@@ -12,6 +12,7 @@ return array(
 				UserController::ROUTE_LOGIN => null,
 				UserController::ROUTE_REGISTER => null,
 				ManageUserController::ROUTE_RESET => null,
+				ManageUserController::ROUTE_USER_MANAGE => array('forgot'),
 			),
 			'bans' => array(),
 			'parents' => array(),

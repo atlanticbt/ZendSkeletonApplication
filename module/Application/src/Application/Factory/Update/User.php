@@ -17,6 +17,8 @@ class User extends UpdateFactory
 			$serviceKey = 'user_create_service';
 		} else if ($this->_getParam('action') == 'reset') {
 			$serviceKey = 'user_reset_service';
+		} else if ($this->_getParam('action') == 'forgot') {
+			$serviceKey = 'user_forgot_service';
 		}
 
 		/* @var $service \Application\Service\Update\User */
