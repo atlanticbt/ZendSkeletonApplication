@@ -105,7 +105,7 @@ class Create extends UserUpdateService
 		if ($this->success()) {
 			/* @var $eventHook \Application\Service\EventHook */
 			$eventHook = $this->getServiceLocator()->get('event_hook');
-			if ($eventHook->trigger('register', $this, array('user' => $this->_getEntity(), 'form' => $this->form()))->wasStopped()) {
+			if ($eventHook->trigger('register', null, array('user' => $this->_getEntity(), 'form' => $this->form()))->wasStopped()) {
 				$this->_success = false;
 				$this->_message = 'Unable to send an invitation email to ' . $this->_getEntity()->getEmail();
 			}
