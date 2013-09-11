@@ -2,10 +2,6 @@ var common = {
 	init: function() {
 	},
 	alert: function(msg) {
-		if (!msg) {
-			$('div.alert').remove();
-			return;
-		}
 		var options = $.extend({
 			type: 'error',
 			expires: 5,
@@ -196,6 +192,7 @@ ABTApp.service('abtPost', function($http) {
  * post-data: getPostData(query): return the post data to be sent with request
  * result-template: resultTemplate(): return template for displaying data set
  * filter-results: filterResults(response): return formatted data set to display
+ * transform-result: transformResult(result): return result formatted as you wish
  */
 ABTApp.directive('autoComplete', function($rootScope, $timeout) {
 	return function(scope, iElement, iAttrs) {
@@ -219,14 +216,24 @@ ABTApp.directive('autoComplete', function($rootScope, $timeout) {
 		var queryData = common.getScopeFunction(iAttrs.postData, scope, function(query) {
 			return {};
 		});
+
+		var transformResult = common.getScopeFunction(iAttrs.transformResult, scope, common.getScopeFunction(cacheName + 'ACResult', scope, function(o) {
+			return o;
+		}));
+
 		var filterResults = common.getScopeFunction(iAttrs.filterResults, scope, function(response) {
-			return response.page.data;
+			var data = [];
+			$.each(response.page.data, function(i, o) {
+				data.push(transformResult(o));
+			});
+			return data;
 		});
 		iElement.typeahead({
 			// name of the dataset so the plugin can cache intelligently
 			name: cacheName,
 			remote: {
 				url: '%QUERY',
+				valueKey: 'email',
 				beforeSend: function(jqXHR, settings) {
 					settings.type = "POST";
 					var query = settings.url;
