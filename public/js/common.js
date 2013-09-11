@@ -204,47 +204,59 @@ ABTApp.directive('autoComplete', function($rootScope, $timeout) {
 			}
 		});
 		var cacheName = iAttrs.autoComplete;
+
+		var getDataSets = common.getScopeFunction(iAttrs.acSet, scope, common.getScopeFunction(cacheName + 'ACDataSet', scope, function() {
+			return [scope];
+		}));
 		var onSelectValue = common.getScopeFunction(iAttrs.valueOnSelect, scope, function(object) {
 			return object.id;
 		});
-		var resultTemplate = common.getScopeFunction(iAttrs.resultTemplate, scope, function() {
-			return '<p>{{name}}</p>';
-		});
-		var queryUrl = common.getScopeFunction(iAttrs.url, scope, function(query) {
-			return window.location.href;
-		});
-		var queryData = common.getScopeFunction(iAttrs.postData, scope, function(query) {
-			return {};
-		});
 
-		var transformResult = common.getScopeFunction(iAttrs.transformResult, scope, common.getScopeFunction(cacheName + 'ACResult', scope, function(o) {
-			return o;
-		}));
-
-		var filterResults = common.getScopeFunction(iAttrs.filterResults, scope, function(response) {
-			var data = [];
-			$.each(response.page.data, function(i, o) {
-				data.push(transformResult(o));
+		var dataSets = [];
+		angular.forEach(getDataSets(), function(dataSet) {
+			var resultTemplate = common.getScopeFunction(iAttrs.resultTemplate, dataSet, function() {
+				return '<p>{{name}}</p>';
 			});
-			return data;
-		});
-		iElement.typeahead({
-			// name of the dataset so the plugin can cache intelligently
-			name: cacheName,
-			remote: {
-				url: '%QUERY',
-				valueKey: 'email',
-				beforeSend: function(jqXHR, settings) {
-					settings.type = "POST";
-					var query = settings.url;
-					settings.url = queryUrl(query);
-					settings.data = queryData(query);
+			var queryUrl = common.getScopeFunction(iAttrs.url, dataSet, function(query) {
+				return window.location.href;
+			});
+			var queryData = common.getScopeFunction(iAttrs.postData, dataSet, function(query) {
+				return {};
+			});
+
+			var transformResult = common.getScopeFunction(iAttrs.transformResult, dataSet, common.getScopeFunction(cacheName + 'ACResult', dataSet, function(o) {
+				return o;
+			}));
+
+			var filterResults = common.getScopeFunction(iAttrs.filterResults, dataSet, function(response) {
+				var data = [];
+				$.each(response.page.data, function(i, o) {
+					data.push(transformResult(o));
+				});
+				return data;
+			});
+			var setName = common.getScopeFunction('setName', dataSet, function(cacheName) {
+				return cacheName;
+			})();
+
+			dataSets.push({
+				// name of the dataset so the plugin can cache intelligently
+				name: setName,
+				remote: {
+					url: '%QUERY|' + setName,
+					valueKey: 'email',
+					beforeSend: function(jqXHR, settings) {
+						var query = settings.url.split('|');
+						settings.data = queryData(query[0]);
+						settings.url = queryUrl(query[0]) + '?' + $.param(settings.data);
+					},
+					filter: filterResults
 				},
-				filter: filterResults
-			},
-			template: resultTemplate(),
-			engine: Hogan
-		}).on('typeahead:selected', function(event, object) {
+				template: resultTemplate(),
+				engine: Hogan
+			});
+		});
+		iElement.typeahead(dataSets).on('typeahead:selected', function(event, object) {
 			$timeout(function() {
 				// global event
 				$rootScope.$broadcast('autoCompleteSelected', object, iElement, iAttrs, event);

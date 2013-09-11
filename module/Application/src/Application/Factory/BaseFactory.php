@@ -57,7 +57,7 @@ abstract class BaseFactory extends BaseService implements BaseFactoryInterface
 	protected function _getParams()
 	{
 		if (!isset($this->_params)) {
-			$this->_params = array_merge($this->_getRouteParams(), $this->_getRequest()->getPost()->toArray());
+			$this->_params = array_merge($this->_getRouteParams(), $this->_getRequest()->getQuery()->toArray(), $this->_getRequest()->getPost()->toArray());
 		}
 		return $this->_params;
 	}

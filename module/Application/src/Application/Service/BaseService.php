@@ -52,5 +52,24 @@ class BaseService implements ServiceLocatorAwareInterface
 		return $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
 	}
 
+	/**
+	 *
+	 * @param string $className
+	 * @param int $id
+	 * @return \Application\Entity\BaseInterface
+	 */
+	protected function _emlookup($className, $id)
+	{
+		$entity = !empty($id) ? $this->_entityManager()->find($className, $id) : null;
+		$nullClass = $className . 'Null';
+		if ($className{0} != '\\') {
+			$nullClass = '\\' . $nullClass;
+		}
+		if (empty($entity) && class_exists($nullClass)) {
+			$entity = new $nullClass();
+		}
+		return $entity;
+	}
+
 }
 
