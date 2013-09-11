@@ -2,6 +2,10 @@ var common = {
 	init: function() {
 	},
 	alert: function(msg) {
+		if (!msg) {
+			$('div.alert').remove();
+			return;
+		}
 		var options = $.extend({
 			type: 'error',
 			expires: 5,
@@ -63,6 +67,15 @@ var common = {
 			common.alert('<ul><li>' + err.join('</li><li>') + '</li></ul>', options);
 		}
 
+	},
+	getScopeFunction: function(key, scope, fallback) {
+		try {
+			if (key && typeof scope[key] == 'function') {
+				return scope[key];
+			}
+		} catch (e) {
+		}
+		return fallback;
 	}
 };
 
@@ -172,19 +185,19 @@ ABTApp.service('abtPost', function($http) {
 
 /**
  * Generic autocomplete directive.
- * Define a text element <input type="text" auto-complete />
- * Specify the name of the scope function to call for source, select and focus events
- * by specifying fn-source="scopeFunctionName", fn-select="...", fn-focus="..." attributes
- * in the element respectively. Those callbacks should have the following signatures
+ * Define a text element <input type="text" auto-complete="[[data cache name]]" />
+ * Specify the name of the scope function to call for various configurations
+ * by specifying fn-source="scopeFunctionName" ... attributes
+ * in the element respectively. Those callbacks should have the following signatures:
  *
- * fnSource = function(term, callback, [dom element], [object containing element attribute key/value pairs]})
- * fnSelect = function([select event],[element selected], [dom element], [object containing element attribute key/value pairs])
- * fnFocus = function([focus event],[element selected], [dom element], [object containing element attribute key/value pairs])
  *
- * @param {type} param1
- * @param {type} param2
+ * value-on-select: onSelectValue({selected dataset object}): return value to set in autocomplete
+ * url: getQueryUrl(query): return where to get the result data set
+ * post-data: getPostData(query): return the post data to be sent with request
+ * result-template: resultTemplate(): return template for displaying data set
+ * filter-results: filterResults(response): return formatted data set to display
  */
-ABTApp.directive('autoComplete', function($rootScope) {
+ABTApp.directive('autoComplete', function($rootScope, $timeout) {
 	return function(scope, iElement, iAttrs) {
 		// prevent enter from submitting the form
 		iElement.on('keypress', function(ev) {
@@ -193,29 +206,45 @@ ABTApp.directive('autoComplete', function($rootScope) {
 				return false;
 			}
 		});
-		// autocomplete plugin
-		iElement.autocomplete({
-			source: function(query, response) {
-				if (scope[iAttrs.fnSource] && typeof scope[iAttrs.fnSource] == 'function') {
-					scope[iAttrs.fnSource](query.term, response, iElement, iAttrs);
-				}
+		var cacheName = iAttrs.autoComplete;
+		var onSelectValue = common.getScopeFunction(iAttrs.valueOnSelect, scope, function(object) {
+			return object.id;
+		});
+		var resultTemplate = common.getScopeFunction(iAttrs.resultTemplate, scope, function() {
+			return '<p>{{name}}</p>';
+		});
+		var queryUrl = common.getScopeFunction(iAttrs.url, scope, function(query) {
+			return window.location.href;
+		});
+		var queryData = common.getScopeFunction(iAttrs.postData, scope, function(query) {
+			return {};
+		});
+		var filterResults = common.getScopeFunction(iAttrs.filterResults, scope, function(response) {
+			return response.page.data;
+		});
+		iElement.typeahead({
+			// name of the dataset so the plugin can cache intelligently
+			name: cacheName,
+			remote: {
+				url: '%QUERY',
+				beforeSend: function(jqXHR, settings) {
+					settings.type = "POST";
+					var query = settings.url;
+					settings.url = queryUrl(query);
+					settings.data = queryData(query);
+				},
+				filter: filterResults
 			},
-			select: function(ev, selected) {
-				if (scope[iAttrs.fnSelect] && typeof scope[iAttrs.fnSelect] == 'function') {
-					ev.preventDefault();
-					scope[iAttrs.fnSelect](ev, selected, iElement, iAttrs);
-					// broadcast selection
-					$rootScope.$broadcast('autoCompleteSelected', selected, iElement, iAttrs, ev);
-					return false;
-				}
-			},
-			focus: function(ev, ui) {
-				ev.preventDefault();
-				if (scope[iAttrs.fnFocus] && typeof scope[iAttrs.fnFocus] == 'function') {
-					scope[iAttrs.fnFocus](ev, ui, iElement, iAttrs);
-				}
-				return false;
-			}
+			template: resultTemplate(),
+			engine: Hogan
+		}).on('typeahead:selected', function(event, object) {
+			$timeout(function() {
+				// global event
+				$rootScope.$broadcast('autoCompleteSelected', object, iElement, iAttrs, event);
+				// targeted event
+				$rootScope.$broadcast('autocomplete-' + cacheName, object, iElement, iAttrs, event);
+			}, 0);
+			iElement.typeahead('setQuery', onSelectValue(object));
 		});
 	};
 }).directive('pageOrder', function($rootScope, pageFilterService) {
