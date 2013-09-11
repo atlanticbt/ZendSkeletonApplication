@@ -12,7 +12,20 @@ function ManageUserCtrl($scope, $http, abtPost) {
 		}, function(msg, data, status, headers, config) {
 			common.formErrors(msg);
 		});
-	}
+	};
+	$scope.findErrorMessage = function(errors) {
+		if (!errors) {
+			return '';
+		}
+		if (typeof errors == 'string') {
+			return '<li>' + errors + '</li>';
+		}
+		var list = '';
+		angular.forEach(errors, function(error) {
+			list += $scope.findErrorMessage(error)
+		});
+		return list;
+	};
 	$scope.form = {};
 	$scope.uploading = false;
 
@@ -24,11 +37,7 @@ function ManageUserCtrl($scope, $http, abtPost) {
 		if (upload && upload.result) {
 			var data = upload.result;
 			if (data.failures && data.failures.length > 0) {
-				common.alert('Encountered ' + data.failures.length + ' errors')
-				angular.forEach(data.failures, function(fail) {
-					console.log('fail', fail);
-					common.formErrors(fail);
-				});
+				common.alert('Encountered ' + data.failures.length + ' errors<ul>' + $scope.findErrorMessage(data.failures) + '</ul>', {expires: 0})
 			}
 			if (data.successes && data.successes.length) {
 				common.alert('<ul><li>' + data.successes.join('</li><li>') + '</li></ul>', {type: 'success'});

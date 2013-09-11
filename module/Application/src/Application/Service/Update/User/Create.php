@@ -107,7 +107,7 @@ class Create extends UserUpdateService
 			$eventHook = $this->getServiceLocator()->get('event_hook');
 			if ($eventHook->trigger('register', null, array('user' => $this->_getEntity(), 'form' => $this->form()))->wasStopped()) {
 				$this->_success = false;
-				$this->_message = 'Unable to send an invitation email to ' . $this->_getEntity()->getEmail();
+				$this->_message = array('Unable to send an invitation email to ' . $this->_getEntity()->getEmail());
 			}
 		}
 		return parent::_postFormValidate();
@@ -129,7 +129,7 @@ class Create extends UserUpdateService
 
 		if (!isset($files[static::BATCH_FILE_UPLOAD_NAME])) {
 			$this->_success = false;
-			$this->_message = 'No file uploaded.';
+			$this->_message = array('No file uploaded.');
 			return;
 		}
 		// open the file
@@ -167,7 +167,7 @@ class Create extends UserUpdateService
 				}
 			} catch (InvalidFileHeadingsException $e) {
 				$this->_success = false;
-				$this->_message = $e->getMessage();
+				$this->_message = array($e->getMessage());
 			}
 		}
 
