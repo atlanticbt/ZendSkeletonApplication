@@ -36,9 +36,16 @@ class Email extends BaseService
 
 	public function __construct()
 	{
+		$this->reset();
+	}
+
+	public function reset()
+	{
 		$this->_message = new Message();
 		$this->_message->addFrom(static::EMAIL_NO_REPLY)
 				->addReplyTo(static::EMAIL_NO_REPLY);
+		$this->resetBody();
+		return $this;
 	}
 
 	public function setBody($content, $html = true)

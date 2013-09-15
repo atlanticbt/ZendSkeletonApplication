@@ -46,7 +46,7 @@ class Invitation extends BaseService
 
 		/* @var $email \Application\Service\Email */
 		$email = $this->getServiceLocator()->get('email');
-		$email->resetBody();
+		$email->reset();
 		return $email->addTo($user->getEmail())
 						->setSubject($config['subject'])
 						->setBody($htmlMarkup)
