@@ -20,6 +20,7 @@ class PageNg extends AbstractHelper
 	const OPTION_ROW_SCRIPT = 'entryRowScript';
 	const OPTION_ROW_SCRIPT_PARAMS = 'entryRowScriptParams';
 	const OPTION_ROW_EMPTY_MESSAGE = 'emptyTableMessage';
+	const OPTION_PAGE_SCRIPT = '';
 
 	private $_defaultOptions;
 	protected $_options = array();
@@ -31,6 +32,7 @@ class PageNg extends AbstractHelper
 			static::OPTION_ROW_HEADINGS => array('<th>ID</th>'),
 			static::OPTION_ROW_TMP => '<td>{{entry.id}}</td>', // template
 			static::OPTION_ROW_EMPTY_MESSAGE => 'No results found.',
+			static::OPTION_PAGE_SCRIPT => 'pagination/page-content.phtml',
 			'containerId' => '',
 			'heading' => 'Results',
 			'entryName' => 'entry', //
@@ -92,8 +94,8 @@ class PageNg extends AbstractHelper
 	 */
 	public function create()
 	{
-		$options = array_merge($this->_defaultOptions, $this->_options);
-		return $this->_render('pagination/page-content.phtml', $this->_processOptions($options));
+		$options = $this->_processOptions(array_merge($this->_defaultOptions, $this->_options));
+		return $this->_render($options[static::OPTION_PAGE_SCRIPT], $options);
 	}
 
 	/**

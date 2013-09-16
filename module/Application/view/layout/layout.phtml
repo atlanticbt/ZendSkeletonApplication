@@ -66,6 +66,11 @@
                 <p>&copy; <?php echo date('Y') ?> by <a href="http://atlanticbt.com">AtlanticBT</a> <?php echo $this->translate('All rights reserved.') ?></p>
             </footer>
         </div> <!-- /container -->
-		<?php echo $this->inlineScript()->prependFile($this->basePath() . '/js/common.js') ?>
+		<?php
+		echo $this->inlineScript()
+				->prependFile($this->basePath() . '/js/common.js')
+				->prependFile($this->basePath() . '/js/hogan.min.js')
+				->prependFile($this->basePath() . '/js/typeahead.min.js')
+		?>
     </body>
 </html>

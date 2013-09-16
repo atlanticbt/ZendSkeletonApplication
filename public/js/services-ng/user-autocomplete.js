@@ -2,10 +2,6 @@ ABTApp.service('acUsers', function() {
 	return {
 		addTo: function(scope) {
 			var baseFunctions = {
-				onSelectValue: function(object) {
-					//	return value to set in autocomplete
-					return object.email;
-				},
 				getQueryUrl: function(query) {
 					//			return where to get the result data set
 					return '/users';
@@ -21,6 +17,10 @@ ABTApp.service('acUsers', function() {
 				}
 
 			}
+			scope.onSelectValue = function(object) {
+				//	return value to set in autocomplete
+				return object.email;
+			};
 			scope.usersACDataSet = function() {
 				var sets = [
 					$.extend({}, baseFunctions, {
