@@ -38,6 +38,19 @@ class Update extends BaseService implements UpdateInterface
 	protected $_forms;
 
 	/**
+	 * Associative array of callables which will be called after an invokation
+	 * of _generateSideEntities(). This will perform any extra attachments which
+	 * may be necessary.
+	 * Callable should expect 2 parameters:
+	 * 	(string) $key
+	 * 	(\Application\Entity\BaseInterface) $entity
+	 * Nothing is expected in return.
+	 *
+	 * @var array
+	 */
+	protected $_attachEntityCallables = array();
+
+	/**
 	 * Associative array of callables which will be called when a form with a
 	 * matching key is being created from an entity (during _getForms() process)
 	 * Callable should expect 3 parameters:
@@ -231,6 +244,16 @@ class Update extends BaseService implements UpdateInterface
 		return array();
 	}
 
+	protected function _attachSideEntities(array $entities)
+	{
+		foreach ($entities as $key => $entity) {
+			$this->_callForForm($this->_attachEntityCallables, $key, function($key, BaseInterface $entity) {
+
+					}, array($key, $entity));
+		}
+		return $entities;
+	}
+
 	/**
 	 * Gets side entities and stores a local reference. Override _generateSideEntities
 	 * to add entities to this array.
@@ -239,7 +262,7 @@ class Update extends BaseService implements UpdateInterface
 	protected function _getSideEntities()
 	{
 		if (!isset($this->_sideEntities)) {
-			$this->_sideEntities = $this->_generateSideEntities();
+			$this->_sideEntities = $this->_attachSideEntities($this->_generateSideEntities());
 		}
 		return $this->_sideEntities;
 	}
