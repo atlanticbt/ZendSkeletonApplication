@@ -64,7 +64,7 @@ class Reset extends UserUpdateService
 
 	protected function _postValidate()
 	{
-		$this->getServiceLocator()->get('zfcuser_auth_service')->getStorage()->write($this->_getEntity()->getId());
+		$this->getServiceLocator()->get('zfcuser_auth_service')->getStorage()->write($this->_getEntity()->getEId());
 		return parent::_postValidate();
 	}
 

@@ -123,6 +123,11 @@ class User extends Tracked implements UserInterface
 		return $this->email;
 	}
 
+	public function getId()
+	{
+		return $this->getEId();
+	}
+
 	public function getPassword()
 	{
 		return $this->password;

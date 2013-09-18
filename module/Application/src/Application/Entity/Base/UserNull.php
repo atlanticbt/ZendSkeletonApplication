@@ -18,6 +18,11 @@ class UserNull extends TrackedNull implements UserInterface
 		return null;
 	}
 
+	public function getId()
+	{
+		return $this->getEId();
+	}
+
 	public function getPassword()
 	{
 		return null;

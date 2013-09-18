@@ -10,7 +10,7 @@ abstract class BaseNull implements BaseInterface
 		return array();
 	}
 
-	public function getId()
+	public function getEId()
 	{
 		return null;
 	}

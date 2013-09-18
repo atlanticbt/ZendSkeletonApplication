@@ -29,10 +29,10 @@ abstract class Base implements BaseInterface
 
 	public function flatten($extended = false)
 	{
-		return array('id' => $this->getId());
+		return array('id' => $this->getEId());
 	}
 
-	public function getId()
+	public function getEId()
 	{
 		return $this->id;
 	}
@@ -60,7 +60,7 @@ abstract class Base implements BaseInterface
 			}
 			$value = $entity->flatten($extended);
 			if ($indexById) {
-				$results[$entity->getId()] = $value;
+				$results[$entity->getEId()] = $value;
 			} else {
 				$results[] = $value;
 			}
