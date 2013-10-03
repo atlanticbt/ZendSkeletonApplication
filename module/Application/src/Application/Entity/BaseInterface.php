@@ -17,7 +17,7 @@ interface BaseInterface
 	 *
 	 * @return int
 	 */
-	public function getEId();
+	public function id();
 
 	/**
 	 *

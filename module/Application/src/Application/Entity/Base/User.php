@@ -125,7 +125,7 @@ class User extends Tracked implements UserInterface
 
 	public function getId()
 	{
-		return $this->getEId();
+		return $this->id();
 	}
 
 	public function getPassword()
