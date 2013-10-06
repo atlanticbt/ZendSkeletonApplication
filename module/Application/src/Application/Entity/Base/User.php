@@ -23,7 +23,7 @@ class User extends Tracked implements UserInterface
 	 *
 	 * @ORM\Column(type="string", name="display_name", length=256)
 	 * @Annotation\Type("Zend\Form\Element\Text")
-	 * @Annotation\Attributes({"data-ng-model":"form.displayName"})
+	 * @Annotation\Attributes({"data-ng-model":"user.displayName"})
 	 * @Annotation\Options({"label":"Display Name"})
 	 * @Annotation\Filter({"name": "StripTags"})
 	 * @Annotation\Filter({"name": "StringTrim"})
@@ -37,7 +37,7 @@ class User extends Tracked implements UserInterface
 	 *
 	 * @ORM\Column(type="string", length=256);
 	 * @Annotation\Type("Zend\Form\Element\Text")
-	 * @Annotation\Attributes({"data-ng-model":"form.email"})
+	 * @Annotation\Attributes({"data-ng-model":"user.email"})
 	 * @Annotation\Options({"label":"Email"})
 	 * @Annotation\Validator({"name": "EmailAddress", "options": {"messages": {Zend\Validator\EmailAddress::INVALID_FORMAT: "Please provide a valid email address."}}})
 	 *
@@ -67,7 +67,7 @@ class User extends Tracked implements UserInterface
 	 *
 	 * @ORM\Column(type="string", name="name", length=256);
 	 * @Annotation\Type("Zend\Form\Element\Text")
-	 * @Annotation\Attributes({"data-ng-model":"form.username"})
+	 * @Annotation\Attributes({"data-ng-model":"user.username"})
 	 * @Annotation\Options({"label":"User Name"})
 	 * @Annotation\Filter({"name": "StripTags"})
 	 * @Annotation\Filter({"name": "StringTrim"})
@@ -82,7 +82,7 @@ class User extends Tracked implements UserInterface
 	 * @ORM\Column(type="string", length=8);
 	 * @Annotation\Type("Zend\Form\Element\Select")
 	 * @Annotation\Options({"label":"State"})
-	 * @Annotation\Attributes({"data-ng-model": "form.state",
+	 * @Annotation\Attributes({"data-ng-model": "user.state",
 	 *                          "options":{
 	 * 								\Application\Entity\Base\UserInterface::STATE_ACTIVE: "Active",
 	 * 								\Application\Entity\Base\UserInterface::STATE_INACTIVE: "Inactive",

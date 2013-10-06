@@ -43,7 +43,7 @@ class Auditor extends BaseService implements EventSubscriber {
 				// audit type, entity user
 				$id = null;
 				if ($scheduledChangeObject instanceof BaseInterface) {
-					$id = $scheduledChangeObject->getEId();
+					$id = $scheduledChangeObject->id();
 					$delta = $this->_computeEntityChangeset($scheduledChangeObject, $uow);
 				} else {
 					$delta = $this->_computeCollectionChangeset($scheduledChangeObject, $uow);

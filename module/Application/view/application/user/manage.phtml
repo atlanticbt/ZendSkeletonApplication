@@ -6,9 +6,9 @@ $this->inlineScript()->appendFile('/js/controllers-ng/user/manage-ctrl.js');
 ?>
 <div ng-controller="ManageUserCtrl" <?php echo $this->initNg('init', array('user' => $this->entity, 'roleMap' => $this->inviteRoles, 'resetUrl' => $this->resetUrl), true, true); ?>>
 	<div class="row">
-		<a ng-href="<?php echo $this->url(ManageUserController::ROUTE_USER_MANAGE,array('user' => 0)) ?>" class="btn btn-info">Return to Users</a>
+		<a ng-href="<?php echo $this->url(ManageUserController::ROUTE_USER_MANAGE) ?>" class="btn btn-info">Return to Users</a>
 	</div>
-	<h1>Manage {{getRoleDisplayName()}} <button ng-show="resetUrl" class="btn btn-primary pull-right" ng-click="sendReset(user)">Send Password Reset Email</button></h1>
+	<h1>Manage {{getRoleDisplayName()}} <button ng-show="user.id && resetUrl" class="btn btn-primary pull-right" ng-click="sendReset(user)">Send Password Reset Email</button></h1>
 	<?php
 	echo $this->partial('form/form.phtml', array('form' => $this->form, 'url' => $this->url(ManageUserController::ROUTE_USER_MANAGE, array('action' => 'manage'))));
 	?>

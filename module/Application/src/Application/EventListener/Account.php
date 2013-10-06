@@ -16,8 +16,6 @@ use Application\Entity\Base\UserNull;
 class Account extends BaseService
 {
 
-	const MAX_FAILED_LOGIN_ATTEMPTS = 6;
-
 	public function latch()
 	{
 		// attach to account events.
@@ -52,19 +50,7 @@ class Account extends BaseService
 	 */
 	protected function _loginFailed(Event $e)
 	{
-		/* @var $user \Application\Entity\Base\User */
-		$user = $this->_getLoginEventUser($e);
-		if (static::MAX_FAILED_LOGIN_ATTEMPTS > $user->getFailedLoginCount() + 1) {
-			// increment the counter
-			$user->setFailedLoginLastTs('now');
-			$user->incrementFailedLoginCount();
-			$this->_getFlashMessenger()->addErrorMessage('You have <strong>' . (static::MAX_FAILED_LOGIN_ATTEMPTS - $user->getFailedLoginCount()) . '</strong> more login attempts before your account is locked.');
-		} else {
-			// if this is the sixth attempt or more, lock account
-			$user->setState(UserInterface::STATE_LOCKED);
-			$this->_getFlashMessenger()->addErrorMessage('Your account has been locked due to too many unsuccessful attempts.');
-		}
-		$this->_entityManager()->flush();
+        // do nothing
 	}
 
 	/**
@@ -73,10 +59,7 @@ class Account extends BaseService
 	 */
 	protected function _loginSucceeded(Event $e)
 	{
-		/* @var $user \Application\Entity\Base\User */
-		$user = $this->_getLoginEventUser($e);
-		$user->setFailedLoginCount(0);
-		$this->_entityManager()->flush();
+        // do nothing
 	}
 
 	/**
