@@ -2,15 +2,16 @@
 
 namespace Application\Service;
 
+use Application\Service\Permission;
 use Application\Entity\BaseInterface;
 use Application\Entity\Base;
 use Application\Service\EntityToForm;
 use Zend\Form\Form;
 use Application\Service\Update\Exception\UnsetEntity as UnsetEntityException;
+use Application\Service\Lookup\Exception\FailedLookup as FailedLookupException;
 
 class Update extends BaseService implements UpdateInterface
 {
-
 	const BASE_FORM_NAME = 'entity';
 
 	/**
@@ -103,7 +104,7 @@ class Update extends BaseService implements UpdateInterface
 		$this->_entity = $entity;
 		return $this;
 	}
-
+	
 	/**
 	 * Update factory usually sets the data available to the updater. (POST/Route data)
 	 * @param type $params
@@ -300,9 +301,14 @@ class Update extends BaseService implements UpdateInterface
 	protected function _getFormData($formTag)
 	{
 		if ($formTag != static::BASE_FORM_NAME) {
-			return $this->_getParam($formTag);
+			return $this->_filterFormData($this->_getParam($formTag));
 		}
-		return $this->_getParams();
+		return $this->_filterFormData($this->_getParams());
+	}
+
+	protected function _filterFormData($data)
+	{
+		return is_array($data) ? $data : array();
 	}
 
 	/**
@@ -364,6 +370,9 @@ class Update extends BaseService implements UpdateInterface
 	{
 		if (!isset($this->_message)) {
 			$this->_message = array();
+		}
+		if (!is_array($messages)) {
+			$messages = array($messages);
 		}
 		$this->_message = array_merge($this->_message, $messages);
 	}
@@ -503,6 +512,20 @@ class Update extends BaseService implements UpdateInterface
 			throw new \InvalidArgumentException('No valid callable was found.');
 		}
 		return call_user_func_array($callable, $params);
+	}
+
+	/**
+	 * Invokes a lookup service for the type specified in string.
+	 * @param string $type
+	 * @return BaseInterface
+	 * @throws FailedLookupException
+	 */
+	protected function _lookup($type)
+	{
+		/* @var $factory \Application\Factory\Lookup */
+		$factory = $this->getServiceLocator()->get('lookup_factory');
+
+		return $factory->configure($type, $this->_getParams())->getService()->lookup();
 	}
 
 }

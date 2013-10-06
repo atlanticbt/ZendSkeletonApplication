@@ -90,10 +90,10 @@ function PageCtrl($scope, $http, $timeout, $rootScope, pageSharedService) {
 		});
 	};
 	$scope.currentPage = function() {
-		return !$scope.meta || !$scope.meta.limit ? 0 : parseInt(($scope.meta.offset / $scope.meta.limit) + 1);
+		return !$scope.meta || !$scope.meta.limit ? 1 : parseInt(($scope.meta.offset / $scope.meta.limit) + 1);
 	};
 	$scope.totalPages = function() {
-		return !$scope.meta || !$scope.meta.limit ? 0 : Math.ceil($scope.meta.total / $scope.meta.limit);
+		return !$scope.meta || !$scope.meta.limit ? 1 : Math.ceil($scope.meta.total / $scope.meta.limit);
 	};
 
 	if ($scope.pageControllerData) {
@@ -112,7 +112,11 @@ function PageCtrl($scope, $http, $timeout, $rootScope, pageSharedService) {
 		$scope.filters = filters;
 		$scope.loadPage(1);
 	});
-	$scope.$on('pageInject', function(event, pageData) {
+	$scope.$on('pageInject', function(event, pageData, target) {
+        if (target && $scope.pageTag != target) {
+            // skip if target specified and not targeted
+            return;
+        }
 		$scope.setPageData(pageData);
 	});
 

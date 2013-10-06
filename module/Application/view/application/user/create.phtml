@@ -7,8 +7,13 @@ $this->inlineScript()->appendFile('/js/controllers-ng/user/manage-ctrl.js')
 		->appendFile('/js/file-upload/jquery.ui.widget.js')
 		->appendFile('/js/file-upload/jquery.fileupload.js');
 ?>
-<div ng-controller="ManageUserCtrl" <?php echo $this->initNg('setUser', $this->entity, true, true); ?>>
-	<h1>Create User</h1>
+<div ng-controller="ManageUserCtrl" <?php echo $this->initNg('init', array('user' => $this->entity, 'roleMap' => $this->inviteRoles), true, true); ?>>
+	<h1>Create {{getRoleDisplayName()}}</h1>
+	<div class="row">
+		<div class="col-lg-12">
+			<a ng-href="<?php echo $this->url(ManageUserController::ROUTE_USER_MANAGE,array('user' => 0)) ?>" class="btn btn-info pull-right">Return to Users</a>
+		</div>
+	</div>
 	<div class="row">
 		<ul class="nav nav-tabs">
 			<li ng-class="{active:!bulkUpload}"><a href="javascript:void(null)" ng-click="bulkUpload = false">Single User</a></li>

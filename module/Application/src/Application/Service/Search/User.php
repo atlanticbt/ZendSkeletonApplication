@@ -2,8 +2,12 @@
 
 namespace Application\Service\Search;
 
+use Application\Service\PageResponse;
 use Application\Service\Search;
 use Application\Entity\Base\UserInterface as UserEntity;
+use Doctrine\ORM\QueryBuilder;
+use Application\Factory\Role as RoleFactory;
+use Application\Service\Lookup\Exception\FailedLookup as FailedLookupException;
 
 /**
  * service: user_search_service
@@ -25,7 +29,9 @@ class User extends Search
 	{
 		parent::_applyFilters($qb);
 		$this->_filterByActive($qb)
-				->_filterByName($qb);
+				->_filterByName($qb)
+				->_filterByEmail($qb)
+				->_filterByRole($qb);
 		return $this;
 	}
 
@@ -33,8 +39,18 @@ class User extends Search
 	{
 		$name = $this->_getParam('name');
 		if (!empty($name)) {
-			$qb->andWhere('u.name LIKE :name OR u.displayName LIKE :name')
+			$qb->andWhere('u.displayName LIKE :name OR u.username LIKE :name')
 					->setParameter('name', '%' . $name . '%');
+		}
+		return $this;
+	}
+
+	protected function _filterByEmail(\Doctrine\ORM\QueryBuilder $qb)
+	{
+		$email = $this->_getParam('email');
+		if (!empty($email)) {
+			$qb->andWhere('u.email LIKE :email')
+					->setParameter('email', '%' . $email . '%');
 		}
 		return $this;
 	}
@@ -46,9 +62,39 @@ class User extends Search
 		return $this;
 	}
 
+	protected function _filterByRole(QueryBuilder $qb)
+	{
+		$role = $this->_getParam('withRole');
+		$validRoles = $this->_getValidRoles();
+		if (!empty($role) && (empty($validRoles) || in_array($role, $validRoles))) {
+			$validRoles = array($role);
+		}
+		if (!empty($validRoles)) {
+			// get role factory
+			$roleFactory = new RoleFactory();
+			$roleWhere = array();
+			foreach ($validRoles as $validRole) {
+				$roleWhere[] = 'u INSTANCE OF ' . $roleFactory->getClassFromRole($validRole);
+			}
+			$qb->andWhere(implode(' OR ', $roleWhere));
+		}
+		return $this;
+	}
+
+	protected function _getValidRoles()
+	{
+		return array();
+	}
+
 	protected function _getIdParam()
 	{
 		return $this->_getParam('user');
+	}
+
+	protected function isTypeahead()
+	{
+		$typeahead = $this->_getParam('typeahead');
+		return !empty($typeahead);
 	}
 
 }

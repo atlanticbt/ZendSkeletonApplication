@@ -5,7 +5,7 @@ namespace Application\Factory;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\EventManager\EventManagerAwareInterface;
 use Application\Service\BaseService;
-use Zend\Http\Request;
+use Zend\Stdlib\RequestInterface as Request;
 
 interface BaseFactoryInterface extends ServiceLocatorAwareInterface, EventManagerAwareInterface
 {
@@ -22,5 +22,12 @@ interface BaseFactoryInterface extends ServiceLocatorAwareInterface, EventManage
 	 * @return BaseFactoryInterface
 	 */
 	public function setRequest(Request $request);
+
+	/**
+	 *
+	 * @param array $params
+	 * @return BaseFactoryInterface
+	 */
+	public function setParams(array $params);
 }
 

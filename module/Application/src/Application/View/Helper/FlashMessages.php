@@ -6,8 +6,7 @@ use Zend\View\Helper\AbstractHelper;
 use Zend\Mvc\Controller\Plugin\FlashMessenger as FlashMessenger;
 
 /**
- * @author Rick <rick@thewebmen.com>
- * @company The Webmen
+ *
  */
 class FlashMessages extends AbstractHelper
 {

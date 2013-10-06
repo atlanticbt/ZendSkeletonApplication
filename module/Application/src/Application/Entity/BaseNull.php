@@ -2,6 +2,8 @@
 
 namespace Application\Entity;
 
+use Doctrine\ORM\EntityManager;
+
 abstract class BaseNull implements BaseInterface
 {
 
@@ -18,6 +20,10 @@ abstract class BaseNull implements BaseInterface
 	public function isNull()
 	{
 		return true;
+	}
+
+	public function __toString() {
+		return '';
 	}
 
 }

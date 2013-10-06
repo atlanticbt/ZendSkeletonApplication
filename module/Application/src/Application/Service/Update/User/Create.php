@@ -9,6 +9,7 @@ use Zend\Form\Form;
 use Application\Entity\Base;
 use Application\Service\Permission;
 use Application\Form\Validator\DoctrineNoRecordExists;
+use Application\Service\Lookup\Exception\FailedLookup as FailedLookupException;
 
 /**
  * service: user_create_service
@@ -49,6 +50,12 @@ class Create extends UserUpdateService
 	 * @var \Application\Service\Invitation
 	 */
 	protected $_inviteService;
+
+	/**
+	 *
+	 * @var string
+	 */
+	protected $_role;
 
 	public function __construct()
 	{
@@ -121,6 +128,14 @@ class Create extends UserUpdateService
 		return parent::update();
 	}
 
+	protected function _getRole()
+	{
+		if (!isset($this->_role)) {
+			$this->_role = $this->_getParam('role');
+		}
+		return $this->_role;
+	}
+
 	protected function _batchUpdate()
 	{
 		/* @var $request Request */
@@ -135,7 +150,7 @@ class Create extends UserUpdateService
 		// open the file
 		if (($handle = fopen($files[static::BATCH_FILE_UPLOAD_NAME]['tmp_name'], "r")) !== false) {
 			$roleFactory = new \Application\Factory\Role();
-			$role = $this->_getParam('role');
+			$role = $this->_getRole();
 			// iterate over file contents
 			try {
 				// remove the currently persisted entity.

@@ -4,9 +4,6 @@ namespace Application\Factory;
 
 use Application\Factory\Role\Exception\InvalidUserRole as InvalidUserRoleException;
 use Application\Service\Permission;
-use Application\Entity\Base\User;
-use Application\Entity\Base\User\Admin;
-use Application\Entity\Base\User\Super;
 
 /**
  *
@@ -14,20 +11,26 @@ use Application\Entity\Base\User\Super;
 class Role
 {
 
-	public function createUser($role)
+	public function getClassFromRole($role)
 	{
 		switch ($role) {
 			case Permission::ROLE_USER:
-				return new User();
+				return '\Application\Entity\Base\User';
 				break;
 			case Permission::ROLE_ADMIN:
-				return new Admin();
+				return '\Application\Entity\Base\User\Admin';
 				break;
 			case Permission::ROLE_SUPER:
-				return new Super();
+				return '\Application\Entity\Base\User\Super';
 				break;
 		}
 		throw new InvalidUserRoleException('Unable to create user of role ' . $role);
+	}
+
+	public function createUser($role)
+	{
+		$class = $this->getClassFromRole($role);
+		return new $class();
 	}
 
 }

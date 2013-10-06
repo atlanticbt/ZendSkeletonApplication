@@ -93,9 +93,9 @@ class PageResponse extends BaseService
 	/**
 	 * @return array
 	 */
-	public function generate()
+	public function generate($canFlatten = true)
 	{
-		return array('page' => array(
+		$response = array('page' => array(
 				'data' => $this->_data,
 				'options' => $this->_options,
 				'shared' => $this->_shared,
@@ -106,6 +106,12 @@ class PageResponse extends BaseService
 				),
 			),
 		);
+		if ($canFlatten) {
+			/* @var $flattener \Application\Service\RFlatten */
+			$flattener = $this->getServiceLocator()->get('rflatten');
+			$response = $flattener($response);
+		}
+		return $response;
 	}
 
 }

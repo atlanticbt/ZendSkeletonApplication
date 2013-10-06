@@ -17,20 +17,15 @@ class EntityToForm extends BaseService
 		if (empty($entity)) {
 			return null;
 		}
-		try {
-
-			$className = get_class($entity);
-			$builder = new AnnotationBuilder();
-			// use the entity annotations and create a zend form object
-			$form = $builder->createForm($className);
-			// set strategy for how to transfer data between form elements and
-			$form->setHydrator(new DoctrineHydrator($this->_entityManager(), $className));
-			// populate form with entity
-			$form->bind($entity);
-			return $form;
-		} catch (\Exception $e) {
-			return null;
-		}
+		$className = get_class($entity);
+		$builder = new AnnotationBuilder();
+		// use the entity annotations and create a zend form object
+		$form = $builder->createForm($className);
+		// set strategy for how to transfer data between form elements and
+		$form->setHydrator(new DoctrineHydrator($this->_entityManager(), $className));
+		// populate form with entity
+		$form->bind($entity);
+		return $form;
 	}
 
 	public function __invoke($entity)

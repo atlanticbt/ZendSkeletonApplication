@@ -2,7 +2,9 @@
 
 namespace Application\Service;
 
-use Zend\Http\Request;
+use Zend\Http\Request as HttpRequest;
+use Zend\Console\Request as ConsoleRequest;
+use Zend\Stdlib\RequestInterface as Request;
 
 /**
  * service: page_vars
@@ -16,16 +18,29 @@ class PageVars
 
 	public function seed(Request $request)
 	{
-		$offset = (int) ($request->getPost('offset') ? : $request->getQuery('offset'));
-		$limit = (int) ($request->getPost('limit') ? : $request->getQuery('limit'));
-		if (!is_numeric($offset) || empty($offset)) {
-			$offset = 0;
+		if ($request instanceof HttpRequest) {
+			$this->_httpRequest($request);
+		} else if ($request instanceof ConsoleRequest) {
+			$this->_consoleRequest($request);
 		}
-		if (!is_numeric($limit) || empty($limit)) {
-			$limit = 10;
+		if (!is_numeric($this->_offset) || empty($this->_offset)) {
+			$this->_offset = 0;
 		}
-		$this->_offset = $offset;
-		$this->_limit = $limit;
+		if (!is_numeric($this->_limit) || empty($this->_limit)) {
+			$this->_limit = 10;
+		}
+		return $this;
+	}
+
+	protected function _httpRequest(HttpRequest $request) {
+		$this->_offset = (int) ($request->getPost('offset') ? : $request->getQuery('offset'));
+		$this->_limit = (int) ($request->getPost('limit') ? : $request->getQuery('limit'));
+		return $this;
+	}
+
+	protected function _consoleRequest(ConsoleRequest $request) {
+		$this->_offset = $request->getParam('offset');
+		$this->_limit = $request->getParam('limit');
 		return $this;
 	}
 

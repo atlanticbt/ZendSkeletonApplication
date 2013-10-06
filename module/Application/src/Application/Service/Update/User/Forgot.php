@@ -54,7 +54,7 @@ class Forgot extends UserUpdateService
 
 		/* @var $invitation \Application\Service\Invitation */
 		$invitation = $this->getServiceLocator()->get('invitation');
-		if ($invitation->send($this->_getEntity(), true)) {
+		if ($invitation->setEmailTemplate('email/forgot.phtml')->send($this->_getEntity(), true)) {
 			$this->_success = true;
 			$this->_entityManager()->flush();
 		} else {

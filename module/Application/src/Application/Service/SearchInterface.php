@@ -12,6 +12,14 @@ interface SearchInterface
 	public function singular($singular = null);
 
 	/**
+	 * Returns whether the search service is paginated. If $paginated is not null,
+	 * it sets the paginated state of the service.
+	 * @param type $paginated
+	 * @return SearchInterface
+	 */
+	public function paginated($paginated = null);
+
+	/**
 	 *
 	 * @param int $offset
 	 * @param int $limit

@@ -47,7 +47,6 @@ class Email extends BaseService
 		$this->resetBody();
 		return $this;
 	}
-
 	public function setBody($content, $html = true)
 	{
 		if ($html) {
@@ -85,6 +84,11 @@ class Email extends BaseService
 	public function addTo($email)
 	{
 		$this->_message->addTo($email);
+		return $this;
+	}
+
+	public function setTo($email) {
+		$this->_message->setTo($email);
 		return $this;
 	}
 

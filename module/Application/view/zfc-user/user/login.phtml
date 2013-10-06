@@ -1,0 +1,17 @@
+<?php
+	use Application\Controller\UserController as ManageUserController;
+?>
+<h1>Sign In</h1>
+
+<?php
+$form = $this->loginForm;
+$form->prepare();
+$form->setAttribute('action', $this->url('zfcuser/login'));
+$form->setAttribute('method', 'post');
+
+echo $this->partial('form/form.phtml',array('form' => $form, 'elements' => array('identity','credential')));
+?>
+<a href="<?php echo $this->url(ManageUserController::ROUTE_USER_MANAGE, array('action' => 'forgot')); ?>">Forgot Password</a>
+<?php if ($this->enableRegistration) : ?>
+	Not registered? <a href="<?php echo $this->url('zfcuser/register') . ($this->redirect ? '?redirect='.$this->redirect : '') ?>">Sign up!</a>
+<?php endif; ?>

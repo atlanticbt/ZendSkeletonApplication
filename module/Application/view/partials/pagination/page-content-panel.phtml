@@ -1,0 +1,22 @@
+<?php
+$this->inlineScript()->appendFile('/js/controllers-ng/page.js');
+?>
+<div id="<?php echo $this->containerId; ?>" class="panel panel-default" id="panels" ng-controller="PageCtrl" <?php echo $this->initNg('setPageData', $this->page, true, true) ?>>
+    <div class="panel-heading">
+        <?php echo $this->heading; ?> ({{meta.total && meta.total || '0'}})
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item" ng-hide="loadingPage" ng-repeat="<?php echo $this->entryName; ?> in entries">
+            <?php echo $this->entryRow; ?>
+        </li>
+        <li class="list-group-item" ng-show="entries.length < 1 && !loadingPage"><em><?php echo $this->emptyTableMessage ?></em></li>
+        <li class="list-group-item" ng-show="loadingPage"><?php echo empty($this->loadingTableMessage) ? '<div class="progress progress-striped active">
+  <div class="progress-bar" role="progressbar" style="width: 50%">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>' : ('<em>' . $this->loadingTableMessage . '</em>'); ?></li>
+    </ul>
+    <div class="panel-footer" ng-show="totalPages() > 1">
+        <?php echo $this->render('pagination/page-buttons.phtml'); ?>
+    </div>
+</div>

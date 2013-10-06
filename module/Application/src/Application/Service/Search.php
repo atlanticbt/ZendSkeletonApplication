@@ -11,6 +11,8 @@ use Application\Service\PageResponse;
 abstract class Search extends BaseService implements SearchInterface
 {
 
+	protected $_paginated = true;
+	protected $_raw = false;
 	protected $_params;
 	protected $_singular = false;
 	protected $_offset = 0;
@@ -75,8 +77,10 @@ abstract class Search extends BaseService implements SearchInterface
 
 	protected function _applyRange(QueryBuilder $qb)
 	{
-		$qb->setFirstResult($this->offset())
-				->setMaxResults($this->limit());
+		if ($this->paginated()) {
+			$qb->setFirstResult($this->offset())
+					->setMaxResults($this->limit());
+		}
 		return $this;
 	}
 
@@ -221,9 +225,11 @@ abstract class Search extends BaseService implements SearchInterface
 
 	public function firstResult()
 	{
-		$results = $this->results();
+		$results = $this->_doSearch();
+		$response = $this->_getPageResponse();
+		$this->_prepareResponse($results, $response);
 		foreach ($results as $item) {
-			return $item;
+			return $this->raw() ? $item : $this->_appendResult($item, $response);
 		}
 		return null;
 	}
@@ -241,6 +247,9 @@ abstract class Search extends BaseService implements SearchInterface
 	public function results()
 	{
 		$results = $this->_doSearch();
+		if ($this->raw()) {
+			return $results;
+		}
 		/* @var $pageResponse \Application\Service\PageResponse */
 		$pageResponse = $this->_getPageResponse()
 				->setOffset($this->offset())
@@ -253,9 +262,39 @@ abstract class Search extends BaseService implements SearchInterface
 			$data[] = $this->_appendResult($result, $pageResponse);
 		}
 
-		return $pageResponse
-						->setData($data)
-						->generate();
+		return $this->_finalizeResults($pageResponse
+								->setData($data)
+								->generate());
+	}
+
+	protected function _finalizeResults($viewModelData)
+	{
+		return $viewModelData;
+	}
+
+	protected function _lookup($type)
+	{
+		/* @var $factory \Application\Factory\Lookup */
+		$factory = $this->getServiceLocator()->get('lookup_factory');
+
+		return $factory->configure($type, $this->_getParams())->getService()->lookup();
+	}
+
+	public function paginated($paginated = null)
+	{
+		if ($paginated === null) {
+			return $this->_paginated;
+		}
+		$this->_paginated = $paginated;
+		return $this;
+	}
+
+	public function raw($raw = null) {
+		if ($raw === null) {
+			return $this->_raw;
+		}
+		$this->_raw = $raw;
+		return $this;
 	}
 
 }

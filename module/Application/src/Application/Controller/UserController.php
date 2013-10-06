@@ -7,6 +7,7 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Application\Entity\Base\UserInterface;
 use Application\Service\Update\Exception\UnsetEntity as UnsetEntityException;
+use Application\Service\Lookup\Exception\FailedLookup as FailedLookupException;
 
 class UserController extends AbstractActionController
 {
@@ -26,7 +27,9 @@ class UserController extends AbstractActionController
 		/* @var $permission \Application\Service\Permission */
 		$permission = $this->getServiceLocator()->get('permission_service');
 
-		return $this->getRequest()->isPost() ? new JsonModel($data) : new ViewModel(array_merge($data, array('inviteRoles' => $permission->getAccessibleRoles())));
+		return $this->getRequest()->isXmlHttpRequest() ? new JsonModel($data) : new ViewModel(array_merge($data, array(
+			'inviteRoles' => $permission->getAccessibleRoles(),
+		)));
 	}
 
 	public function forgotAction()
@@ -48,6 +51,14 @@ class UserController extends AbstractActionController
 			return $this->redirect()->toRoute(static::ROUTE_USER_MANAGE, array('action' => 'forgot'));
 		}
 		return new ViewModel();
+	}
+
+	public function sendResetAction() {
+		/* @var $factory \Application\Factory\Update\User */
+		$factory = $this->getServiceLocator()->get('user_update_factory');
+		/* @var $service \Application\Service\Update\User\Forgot */
+		$service = $factory->setParams(array('action' => 'forgot','user' => $this->getRequest()->getPost('user')))->getService()->update();
+		return $this->jsonResponse($service->success(),$service->message(),$service->responseData());
 	}
 
 	/**
@@ -88,13 +99,21 @@ class UserController extends AbstractActionController
 	{
 		/* @var $factory \Application\Factory\Update\User */
 		$factory = $this->getServiceLocator()->get('user_update_factory');
-		/* @var $service \Application\Service\Update\User */
+		/* @var $service \Application\Service\Update\User\Create */
 		$service = $factory->creating($creating)->getService();
 		if ($this->getRequest()->isPost()) {
 			$service->update();
 			return $this->jsonResponse($service->success(), $service->message(), $service->responseData());
 		}
-		return new ViewModel(array('form' => $service->form(), 'entity' => $service->entity()));
+		/* @var $permission \Application\Service\Permission */
+		$permission = $this->getServiceLocator()->get('permission_service');
+		$view = new ViewModel(array(
+			'form' => $service->form(),
+			'entity' => $service->entity(),
+			'inviteRoles' => $permission->getAccessibleRoles(),
+			'resetUrl' => $permission->allowed(static::ROUTE_USER_MANAGE, 'send-reset') ? $this->url()->fromRoute(static::ROUTE_USER_MANAGE, array('action' => 'send-reset')) : null,
+		));
+		return $view;
 	}
 
 }

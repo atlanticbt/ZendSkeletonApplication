@@ -2,6 +2,8 @@
 
 namespace Application\View\Helper;
 
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Helper\AbstractHelper;
 use Application\Entity\Base;
 
@@ -12,8 +14,9 @@ use Application\Entity\Base;
  * View helper for injecting data from the controller into the view for Angular to consume
  *
  */
-class InitNg extends AbstractHelper
+class InitNg extends AbstractHelper implements ServiceLocatorAwareInterface
 {
+	protected $_helperManager;
 
 	/**
 	 *
@@ -30,26 +33,31 @@ class InitNg extends AbstractHelper
 		return ' ng-init="' . $name . ($setAsFunction ? "({$initData})" : " = $initData") . ';" ';
 	}
 
-	/**
-	 * Take a Doctrine entity which implements the base interface (has a flatten function)
-	 * and invokes flatten on it. Else checks if it's an array. If so, inspects all data
-	 * @param type $data
-	 * @return \Application\View\Helper\Traversable
-	 */
 	public function recursiveFlatten($data)
 	{
-		if (is_object($data) && $data instanceof Base) {
-			return $data->flatten();
-		}
-		if (is_array($data) || $data instanceof \Traversable) {
-			$flatArray = array();
-			foreach ($data as $key => $value) {
-				$flatArray[$key] = $this->recursiveFlatten($value);
-			}
-			return $flatArray;
-		}
-		return $data;
+		$flattener = $this->getServiceLocator()->getServiceLocator()->get('rflatten');
+		return $flattener($data);
 	}
 
+	/**
+	 * Set service locator
+	 *
+	 * @param ServiceLocatorInterface $serviceLocator
+	 */
+	public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
+	{
+		$this->_helperManager = $serviceLocator;
+		return $this;
+	}
+
+	/**
+	 * Get service locator
+	 *
+	 * @return ServiceLocatorInterface
+	 */
+	public function getServiceLocator()
+	{
+		return $this->_helperManager;
+	}
 }
 

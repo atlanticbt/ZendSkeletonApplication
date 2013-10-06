@@ -26,33 +26,13 @@ return array(
 					),
 				),
 			),
-			// The following is a route to simplify getting started creating
-			// new controllers and actions without needing to create a new
-			// module. Simply drop new controllers in, and you can access them
-			// using the path /application/:controller/:action
-			'application' => array(
-				'type' => 'Literal',
+			'dashboard' => array(
+				'type' => 'Zend\Mvc\Router\Http\Literal',
 				'options' => array(
-					'route' => '/application',
+					'route' => '/dashboard',
 					'defaults' => array(
-						'__NAMESPACE__' => 'Application\Controller',
-						'controller' => 'Index',
-						'action' => 'index',
-					),
-				),
-				'may_terminate' => true,
-				'child_routes' => array(
-					'default' => array(
-						'type' => 'Segment',
-						'options' => array(
-							'route' => '/[:controller[/:action]]',
-							'constraints' => array(
-								'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-								'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-							),
-							'defaults' => array(
-							),
-						),
+						'controller' => 'Application\Controller\Index',
+						'action' => 'dashboard',
 					),
 				),
 			),
@@ -124,6 +104,12 @@ return array(
 			'e2f' => 'Application\Service\EntityToForm',
 			'event_hook' => 'Application\Service\EventHook',
 			'create_account_service' => 'Application\Service\CreateAccountListener',
+			'rflatten' => 'Application\Service\RFlatten',
+			/** event listeners * */
+			'listener_account' => 'Application\EventListener\Account',
+			'listener_auditor' => 'Application\EventListener\Auditor',
+			/** lookups * */
+			'lookup_factory' => 'Application\Factory\Lookup',
 			/** user services * */
 			// override ZfcUser module functionality
 			'zfcuser_user_service' => 'Application\Service\ZfcUser\User',
@@ -158,6 +144,7 @@ return array(
 	'controller_plugins' => array(
 		'invokables' => array(
 			'jsonResponse' => 'Application\Controller\Plugin\JsonResponse',
+			'lookup' => 'Application\Controller\Plugin\Lookup',
 		),
 	),
 	'view_manager' => array(
@@ -175,6 +162,9 @@ return array(
 		'template_path_stack' => array(
 			__DIR__ . '/../view',
 			__DIR__ . '/../view/partials',
+		),
+		'strategies' => array(
+			'ViewJsonStrategy',
 		),
 		'strategies' => array(
 			'ViewJsonStrategy',
@@ -202,12 +192,22 @@ return array(
 		'invokables' => array(
 			'initNg' => 'Application\View\Helper\InitNg',
 			'pageNg' => 'Application\View\Helper\PageNg',
+            'entityToForm' => 'Application\View\Helper\EntityToForm',
 		),
 	),
 	// Placeholder for console routes
 	'console' => array(
 		'router' => array(
 			'routes' => array(
+				'cron' => array(
+					'options' => array(
+						'route'    => 'run cron',
+						'defaults' => array(
+							'controller' => 'Application\Controller\Index',
+							'action'     => 'cron',
+						),
+					),
+				),
 			),
 		),
 	),

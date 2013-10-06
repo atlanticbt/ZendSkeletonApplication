@@ -3,7 +3,7 @@
 use Application\Controller\UserController;
 use Application\View\Helper\PageNg;
 ?>
-
+<div>
 <h1>
 	Manage Users
 	<div class="btn-group pull-right" <?php echo $this->initNg('roles', $this->inviteRoles); ?> ng-show="roles.length > 0">
@@ -25,3 +25,4 @@ echo $this->pageNg(array(
 	PageNg::OPTION_ROW_TMP => '<td>{{entry.id}}</td><td><a ng-href="' . $this->url(UserController::ROUTE_USER_MANAGE, array('action' => 'manage')) . '/{{entry.id}}">{{entry.email}}</a></td><td>{{entry.username}}</td>',
 ));
 ?>
+</div>

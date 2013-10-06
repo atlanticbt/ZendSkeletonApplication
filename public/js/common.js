@@ -1,11 +1,21 @@
 var common = {
+    prependToDefault: null,
 	init: function() {
+        common.prependToDefault = $('body > div.container:first');
 	},
+    call: function(callable, args) {
+        if (callable && typeof callable == 'function') {
+            callable.apply(this,args);
+            return true;
+        }
+        return false;
+    },
+
 	alert: function(msg) {
 		var options = $.extend({
 			type: 'error',
 			expires: 5,
-			prependTo: 'body > div.container:first',
+			prependTo: common.prependToDefault
 		}, arguments[1] || {});
 		var cls = 'info';
 
@@ -36,25 +46,30 @@ var common = {
 	 * @returns {unresolved}
 	 */
 	formErrors: function(errors) {
+        var options = $.extend({
+            prependTo: common.prependToDefault
+        }, arguments[1] || {});
 		if (!errors) {
-			$('div.has-error').removeClass('has-error').find('span.help-block').remove();
+            options.prependTo.find('div.has-error').removeClass('has-error').find('span.help-block').remove();
 			return;
 		}
-		var options = $.extend({}, arguments[1]);
 		if (typeof errors == 'string') {
-			common.alert(errors);
+			common.alert(errors, options);
 			return;
 		}
 		var err = [];
 		$.each(errors, function(section, errorList) {
-			var formInput = $(':input[name=' + section + ']');
+			var formInput = options.prependTo.find(':input[name=' + section + ']');
 			var fieldErrors = [];
 			$.each(errorList, function(errorType, errorMsg) {
 				fieldErrors.push(errorMsg);
 			});
 			if (formInput.length > 0) {
 				// add the error to the field
-				formInput.parents('div:first').parents('div:first').addClass('has-error').end().append('<span class="help-block">' + fieldErrors.join(', ') + '</span>')
+				formInput.each(function(index, input) {
+					$(input).parents('div:first').parents('div:first').addClass('has-error').end().append('<span class="help-block">' + fieldErrors.join(', ') + '</span>');
+					return options.showOnAllMatches ? true : false;
+				});
 			} else {
 				err = err.concat(fieldErrors);
 			}
@@ -208,21 +223,21 @@ ABTApp.directive('autoComplete', function($rootScope, $timeout) {
 		var getDataSets = common.getScopeFunction(iAttrs.acSet, scope, common.getScopeFunction(cacheName + 'ACDataSet', scope, function() {
 			return [scope];
 		}));
-		var onSelectValue = common.getScopeFunction(iAttrs.valueOnSelect, scope, function(object) {
+		var onSelectValue = common.getScopeFunction(iAttrs.valueOnSelect, scope, common.getScopeFunction(cacheName + 'ACOnSelect', scope, function(object) {
 			return object.id;
-		});
+		}));
 
 		var dataSets = [];
 		angular.forEach(getDataSets(), function(dataSet) {
-			var resultTemplate = common.getScopeFunction(iAttrs.resultTemplate, dataSet, function() {
+			var resultTemplate = common.getScopeFunction(iAttrs.resultTemplate, dataSet, common.getScopeFunction(cacheName + 'ACTemplate', dataSet, function() {
 				return '<p>{{name}}</p>';
-			});
-			var queryUrl = common.getScopeFunction(iAttrs.url, dataSet, function(query) {
+			}));
+			var queryUrl = common.getScopeFunction(iAttrs.url, dataSet, common.getScopeFunction(cacheName + 'ACUrl', dataSet, function(query) {
 				return window.location.href;
-			});
-			var queryData = common.getScopeFunction(iAttrs.postData, dataSet, function(query) {
+			}));
+			var queryData = common.getScopeFunction(iAttrs.postData, dataSet, common.getScopeFunction(cacheName + 'ACPostData', dataSet, function(query) {
 				return {};
-			});
+			}));
 
 			var transformResult = common.getScopeFunction(iAttrs.transformResult, dataSet, common.getScopeFunction(cacheName + 'ACResult', dataSet, function(o) {
 				return o;

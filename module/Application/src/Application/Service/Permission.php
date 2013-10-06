@@ -10,7 +10,7 @@ use Zend\Permissions\Acl\Resource\GenericResource;
  */
 class Permission extends BaseService
 {
-
+    const RESOURCE_MANAGE_USER_TYPE = 'manage-user-resource';
 	const RESOURCE_INVITE = 'invite-resource';
 	const ROLE_GUEST = 'guest';
 	const ROLE_USER = 'user';

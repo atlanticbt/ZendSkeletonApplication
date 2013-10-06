@@ -3,7 +3,7 @@
 namespace Application\Factory;
 
 use Application\Service\BaseService;
-use Zend\Http\Request;
+use Zend\Stdlib\RequestInterface as Request;
 
 abstract class BaseFactory extends BaseService implements BaseFactoryInterface
 {
@@ -32,6 +32,17 @@ abstract class BaseFactory extends BaseService implements BaseFactoryInterface
 	public function setRequest(Request $request)
 	{
 		$this->_request = $request;
+		return $this;
+	}
+
+	/**
+	 * Sets base factory params.
+	 * @param array $params
+	 * @return \Application\Factory\BaseFactory
+	 */
+	public function setParams(array $params)
+	{
+		$this->_params = $params;
 		return $this;
 	}
 
@@ -66,6 +77,14 @@ abstract class BaseFactory extends BaseService implements BaseFactoryInterface
 	{
 		$params = $this->_getParams();
 		return isset($params[$index]) ? $params[$index] : null;
+	}
+
+	protected function _lookup($type)
+	{
+		/* @var $factory \Application\Factory\Lookup */
+		$factory = $this->getServiceLocator()->get('lookup_factory');
+
+		return $factory->configure($type, $this->_getParams())->getService()->lookup();
 	}
 
 	public function getEventManager()

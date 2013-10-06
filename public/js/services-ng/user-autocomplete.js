@@ -16,21 +16,20 @@ ABTApp.service('acUsers', function() {
 					return o;
 				}
 
-			}
+			};
+			var extension = $.extend({}, arguments[1] || {});
 			scope.onSelectValue = function(object) {
 				//	return value to set in autocomplete
 				return object.email;
 			};
 			scope.usersACDataSet = function() {
-				var sets = [
-					$.extend({}, baseFunctions, {
+				var set = [$.extend({}, baseFunctions, {
 						getPostData: function(query) {
 							//			return the post data to be sent with request
 							return {email: query};
 						}
-					})
-				];
-				return sets;
+					}, extension)];
+				return set;
 			}
 		}
 	};
