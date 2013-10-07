@@ -67,7 +67,10 @@ class Tracked extends Base implements TrackedInterface
 		if (is_string($input)) {
 			return new \DateTime($input);
 		}
-		return $input;
+        if (!$input instanceof \DateTime) {
+            throw new \InvalidArgumentException('The value provided is not a valid timestamp.');
+        }
+        return $input;
 	}
 
 }
